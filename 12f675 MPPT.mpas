@@ -1,0 +1,165 @@
+program _12f675_MPPT;
+
+{ 12F675 MPPT controller
+
+  Copyright (C) 2015 rasberryrabbit
+
+  This source is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or MPL 1.1
+  any later version.
+
+  This code is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details.
+
+  A copy of the GNU General Public License is available on the World Wide Web
+  at <http://www.gnu.org/copyleft/gpl.html>. You can also obtain it by writing
+  to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+  MA 02111-1307, USA.
+}
+
+const
+   { 4MHz }
+   PWM_MAX = 200;   // 1000000 / 2 / 205, ~2500Hz
+   PWM_LOW = 0;
+   
+   current_min = 3;   // < 4.7mV~15mV / 5v * 1024, Calibrate at no load. rely on LM358 output.
+   curr_scale = 15;
+
+   TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
+   TMR1H_LOAD=$fc;
+
+var
+   LED1:sbit at GP5_bit;
+   PWM_SIG:sbit at GP0_bit;
+   PWM_TICK, ON_PWM, VOL_PWM:byte;
+   TICK_1000:Byte;
+   LED1_tm:byte;
+   adc_vol, adc_cur, offset_cur : word;
+   power_prev, power_curr: dword;
+   flag_inc:Boolean;
+
+procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
+begin
+     if T0IF_bit=1 then begin
+       { PWM MAX 84% }
+       if PWM_SIG=1 then begin
+         ON_PWM:=VOL_PWM;
+         if ON_PWM=0 then
+           TMR0:=255-PWM_MAX
+         else begin
+           TMR0:=255-ON_PWM;
+           PWM_SIG:=0;
+         end;
+       end else begin
+         TMR0:=255-PWM_MAX+ON_PWM;
+         PWM_SIG:=1;
+       end;
+       T0IF_bit:=0;
+     end else
+     if T1IF_bit=1 then begin
+       Inc(TICK_1000);
+       TMR1L:=TMR1L_LOAD;
+       TMR1H:=TMR1H_LOAD;
+       if TICK_1000>LED1_Tm then begin
+         LED1:=not LED1;
+         TICK_1000:=0;
+       end;
+       T1IF_bit:=0;
+     end;
+end;
+
+begin
+     CMCON:=7;
+     ANSEL:=%00011100;       // 8/osc, AN3, AN2;
+
+     TRISIO0_bit:=0;      // PWM
+     TRISIO1_bit:=1;      // not Connected
+     TRISIO2_bit:=1;      // AN2
+     TRISIO4_bit:=1;      // AN3
+     TRISIO5_bit:=0;      // LED
+     
+     LED1:=0;
+     PWM_SIG:=1;
+     LED1_tm:=250;
+     ON_PWM:=0;
+     VOL_PWM:=PWM_LOW;
+     TICK_1000:=0;
+     power_prev:=0;
+     offset_cur:=0;
+     flag_inc:=True;
+
+     OPTION_REG:=%11010000;        // ~2KHz @ 4MHz, enable weak pull-up
+     TMR0IE_bit:=1;
+
+     PEIE_bit:=1;
+
+     T1CKPS0_bit:=1;               // timer prescaler 1:2
+     TMR1CS_bit:=0;
+     TMR1IE_bit:=1;
+     TMR1L:=TMR1L_LOAD;
+     TMR1H:=TMR1H_LOAD;
+
+     adc_vol:=0;
+     adc_cur:=0;
+
+     GIE_bit:=1;                   // enable Interrupt
+
+     TMR1ON_bit:=1;
+
+     Delay_10ms;
+
+     while True do begin
+       if VOL_PWM=PWM_LOW then
+         offset_cur:=ADC_Read(2);
+
+       if flag_inc then begin
+         if VOL_PWM<PWM_MAX then
+           Inc(VOL_PWM);
+       end else begin
+         if VOL_PWM>PWM_LOW then
+           Dec(VOL_PWM);
+       end;
+       Delay_5ms;
+       
+       adc_cur:=ADC_Read(2);
+       if adc_cur>offset_cur then begin
+         adc_vol:=ADC_Read(3);
+         power_curr:=(adc_cur{ * curr_scale div 10})*adc_vol;
+         if power_curr>=power_prev then begin
+           power_prev:=power_curr;
+         end else begin
+           if flag_inc then begin
+             if VOL_PWM>PWM_LOW then
+               Dec(VOL_PWM);
+           end else begin
+             if VOL_PWM<PWM_MAX then
+               Inc(VOL_PWM);
+           end;
+           flag_inc:=not flag_inc;
+         end;
+       end else begin
+         flag_inc:=True;
+         power_prev:=0;
+       end;
+
+       // flip increment state
+       if flag_inc then begin
+         if VOL_PWM=PWM_MAX then
+           flag_inc:=False;
+       end else begin
+         if VOL_PWM=PWM_LOW then
+           flag_inc:=True;
+       end;
+       // LED
+       if VOL_PWM=PWM_MAX then
+         LED1_tm:=125
+         else
+           if VOL_PWM=PWM_LOW then
+             LED1_tm:=64
+             else
+               LED1_tm:=250;
+     end;
+end.

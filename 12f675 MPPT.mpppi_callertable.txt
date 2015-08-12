@@ -1,0 +1,7 @@
+main
+	Delay_10ms
+	ADC_Read
+		Delay_22us
+	Delay_5ms
+	Mul_32x32_U
+Interrupt
