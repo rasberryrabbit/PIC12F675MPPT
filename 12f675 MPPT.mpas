@@ -27,7 +27,7 @@ const
    PWM_MAX = 205;   // 1000000 / 2 / 205, ~2500Hz
    PWM_LOW = 0;
    
-   current_min = 1;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
+   current_min = 2;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
    curr_scale = 15;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
@@ -39,10 +39,10 @@ var
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur, prev_cur : word;
+   adc_vol, adc_cur, offset_cur, temp_cur : word;
    power_prev, power_curr: dword;
-   flag_inc:Boolean;
    i:byte;
+   flag_inc:boolean;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -88,7 +88,8 @@ begin
      PWM_SIG:=1;
      LED1_tm:=250;
      ON_PWM:=0;
-     VOL_PWM:=PWM_LOW;
+     VOL_PWM:=PWM_MAX;
+     flag_inc:=False;
      TICK_1000:=0;
      power_prev:=0;
      offset_cur:=current_min;
@@ -96,7 +97,7 @@ begin
      Hi(offset_cur):=EEPROM_Read(0);
      Lo(offset_cur):=EEPROM_Read(1);
      {$endif}
-     flag_inc:=True;
+     VCFG_bit:=1;
 
      OPTION_REG:=%11010000;        // ~2KHz @ 4MHz, enable weak pull-up
      TMR0IE_bit:=1;
@@ -119,50 +120,34 @@ begin
      Delay_10ms;
 
      while True do begin
-       if flag_inc then begin
-         if VOL_PWM<PWM_MAX then
-           Inc(VOL_PWM);
-       end else begin
-         if VOL_PWM>PWM_LOW then
-           Dec(VOL_PWM);
-       end;
-       
-       prev_cur:=0;
+       // get current
+       temp_cur:=0;
        for i:=0 to 60 do begin
          adc_cur:=ADC_Read(2);
-         if adc_cur>prev_cur then
-           prev_cur:=adc_cur;
+         if temp_cur<adc_cur then
+           temp_cur:=adc_cur;
        end;
-       adc_cur:=prev_cur;
-
+       adc_cur:=temp_cur;
        if adc_cur>offset_cur then begin
+         // get voltage
          adc_vol:=ADC_Read(3);
-         power_curr:=(adc_cur{ * curr_scale div 10})*adc_vol;
-         if power_curr>=power_prev then begin
-           power_prev:=power_curr;
-         end else begin
-           if flag_inc then begin
-             if VOL_PWM>PWM_LOW then
-               Dec(VOL_PWM);
-           end else begin
-             if VOL_PWM<PWM_MAX then
-               Inc(VOL_PWM);
-           end;
+         power_curr:= adc_cur * adc_vol;
+         if power_curr<power_prev then
            flag_inc:=not flag_inc;
+         if flag_inc then begin
+           if VOL_PWM<PWM_MAX then
+             Inc(VOL_PWM);
+         end else begin
+           if VOL_PWM>PWM_LOW then
+             Dec(VOL_PWM);
          end;
+         power_prev:=power_curr;
        end else begin
-         flag_inc:=True;
+         VOL_PWM:=PWM_MAX;
+         flag_inc:=False;
          power_prev:=0;
        end;
-
-       // flip increment state
-       if flag_inc then begin
-         if VOL_PWM=PWM_MAX then
-           flag_inc:=False;
-       end else begin
-         if VOL_PWM=PWM_LOW then
-           flag_inc:=True;
-       end;
+       //Delay_1ms;
        // LED
        if VOL_PWM=PWM_MAX then
          LED1_tm:=125
