@@ -8,7 +8,7 @@ Value=0
 [ACTIVE_TAB]
 Value=12f675 MPPT.mpas
 [USE_EEPROM]
-Value=0
+Value=1
 [USE_HEAP]
 Value=0
 [HEAP_SIZE]
@@ -27,14 +27,15 @@ ActiveImageIndex=-1
 Count=1
 File0=12f675 MPPT.mpas
 [EEPROM]
-Count=0
+Count=1
+File0=12f675 MPPT.ihex
 [ACTIVE_COMMENTS_FILES]
 Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
 Count=3
-Path0=E:\mikroPascal PRO for PIC\defs\
+Path0=E:\mikroPascal PRO for PIC\Defs\
 Path1=E:\mikroPascal PRO for PIC\Uses\P16\
 Path2=E:\mikroPascal PRO for PIC\works\12f675MPPT\
 [HEADER_PATH]
@@ -65,6 +66,5 @@ File16=String
 File17=Time
 File18=Trigon
 File19=Trigonometry
-[EXPANDED NODES]
-Node1=Sources
-Count=1
+[EXPANDED_NODES]
+Count=0

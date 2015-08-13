@@ -20,12 +20,14 @@ program _12f675_MPPT;
   MA 02111-1307, USA.
 }
 
+{$define USE_EEPROM}
+
 const
    { 4MHz }
-   PWM_MAX = 200;   // 1000000 / 2 / 205, ~2500Hz
+   PWM_MAX = 205;   // 1000000 / 2 / 205, ~2500Hz
    PWM_LOW = 0;
    
-   current_min = 3;   // < 4.7mV~15mV / 5v * 1024, Calibrate at no load. rely on LM358 output.
+   current_min = 2;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
    curr_scale = 15;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
@@ -37,9 +39,10 @@ var
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur : word;
+   adc_vol, adc_cur, offset_cur, prev_cur : word;
    power_prev, power_curr: dword;
    flag_inc:Boolean;
+   i:byte;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -88,7 +91,11 @@ begin
      VOL_PWM:=PWM_LOW;
      TICK_1000:=0;
      power_prev:=0;
-     offset_cur:=0;
+     offset_cur:=current_min;
+     {$ifdef USE_EEPROM}
+     Hi(offset_cur):=EEPROM_Read(0);
+     Lo(offset_cur):=EEPROM_Read(1);
+     {$endif}
      flag_inc:=True;
 
      OPTION_REG:=%11010000;        // ~2KHz @ 4MHz, enable weak pull-up
@@ -112,9 +119,6 @@ begin
      Delay_10ms;
 
      while True do begin
-       if VOL_PWM=PWM_LOW then
-         offset_cur:=ADC_Read(2);
-
        if flag_inc then begin
          if VOL_PWM<PWM_MAX then
            Inc(VOL_PWM);
@@ -122,9 +126,15 @@ begin
          if VOL_PWM>PWM_LOW then
            Dec(VOL_PWM);
        end;
-       Delay_5ms;
-       
-       adc_cur:=ADC_Read(2);
+
+       prev_cur:=0;
+       for i:=0 to 30 do begin
+         adc_cur:=ADC_Read(2);
+         if adc_cur>prev_cur then
+           prev_cur:=adc_cur;
+       end;
+       adc_cur:=prev_cur;
+
        if adc_cur>offset_cur then begin
          adc_vol:=ADC_Read(3);
          power_curr:=(adc_cur{ * curr_scale div 10})*adc_vol;
@@ -157,7 +167,7 @@ begin
        if VOL_PWM=PWM_MAX then
          LED1_tm:=125
          else
-           if VOL_PWM=PWM_LOW then
+           if adc_cur<=offset_cur then
              LED1_tm:=64
              else
                LED1_tm:=250;
