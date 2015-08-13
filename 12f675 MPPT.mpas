@@ -27,7 +27,7 @@ const
    PWM_MAX = 205;   // 1000000 / 2 / 205, ~2500Hz
    PWM_LOW = 0;
    
-   current_min = 2;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
+   current_min = 1;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
    curr_scale = 15;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
@@ -126,9 +126,9 @@ begin
          if VOL_PWM>PWM_LOW then
            Dec(VOL_PWM);
        end;
-
+       
        prev_cur:=0;
-       for i:=0 to 30 do begin
+       for i:=0 to 60 do begin
          adc_cur:=ADC_Read(2);
          if adc_cur>prev_cur then
            prev_cur:=adc_cur;

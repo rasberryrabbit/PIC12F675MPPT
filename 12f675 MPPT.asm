@@ -131,7 +131,7 @@ _main:
 	CLRF       _power_prev+2
 	CLRF       _power_prev+3
 ;12f675 MPPT.mpas,94 :: 		offset_cur:=current_min;
-	MOVLW      2
+	MOVLW      1
 	MOVWF      _offset_cur+0
 	CLRF       _offset_cur+1
 ;12f675 MPPT.mpas,96 :: 		Hi(offset_cur):=EEPROM_Read(0);
@@ -209,7 +209,7 @@ L__main24:
 ;12f675 MPPT.mpas,130 :: 		prev_cur:=0;
 	CLRF       _prev_cur+0
 	CLRF       _prev_cur+1
-;12f675 MPPT.mpas,131 :: 		for i:=0 to 30 do begin
+;12f675 MPPT.mpas,131 :: 		for i:=0 to 60 do begin
 	CLRF       _i+0
 L__main32:
 ;12f675 MPPT.mpas,132 :: 		adc_cur:=ADC_Read(2);
@@ -238,7 +238,7 @@ L__main72:
 L__main37:
 ;12f675 MPPT.mpas,135 :: 		end;
 	MOVF       _i+0, 0
-	XORLW      30
+	XORLW      60
 	BTFSC      STATUS+0, 2
 	GOTO       L__main35
 	INCF       _i+0, 1
