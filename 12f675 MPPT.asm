@@ -419,8 +419,8 @@ L__main59:
 ;12f675 MPPT.mpas,172 :: 		end else begin
 	GOTO       L__main50
 L__main49:
-;12f675 MPPT.mpas,173 :: 		VOL_PWM:=PWM_MAX;
-	MOVLW      205
+;12f675 MPPT.mpas,173 :: 		VOL_PWM:=PWM_MAX div 2;
+	MOVLW      102
 	MOVWF      _VOL_PWM+0
 ;12f675 MPPT.mpas,174 :: 		flag_inc:=False;
 	CLRF       _flag_inc+0

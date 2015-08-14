@@ -170,7 +170,7 @@ begin
          end;
          power_prev:=power_curr;
        end else begin
-         VOL_PWM:=PWM_MAX;
+         VOL_PWM:=PWM_MAX div 2;
          flag_inc:=False;
          power_prev:=0;
        end;
