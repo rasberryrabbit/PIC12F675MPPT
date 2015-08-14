@@ -1,7 +1,6 @@
 main
 	EEPROM_Read
-	Delay_10ms
-	ADC_Read
+	Adc_Readx
 		Delay_22us
 	Mul_32x32_U
 Interrupt

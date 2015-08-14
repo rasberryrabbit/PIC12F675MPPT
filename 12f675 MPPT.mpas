@@ -28,37 +28,36 @@ const
    PWM_LOW = 0;
    
    current_min = 2;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
-   curr_scale = 15;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
    TMR1H_LOAD=$fc;
-
+   
 var
    LED1:sbit at GP5_bit;
    PWM_SIG:sbit at GP0_bit;
+   PWM_FLAG:bit;
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur, temp_cur : word;
+   adc_vol, adc_cur, offset_cur, temp_cur, last_cur : word;
    power_prev, power_curr: dword;
    i:byte;
-   flag_inc:boolean;
+   flag_inc :boolean;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
      if T0IF_bit=1 then begin
-       { PWM MAX 84% }
-       if PWM_SIG=1 then begin
+       if PWM_FLAG=1 then begin
          ON_PWM:=VOL_PWM;
-         if ON_PWM=0 then
-           TMR0:=255-PWM_MAX
-         else begin
-           TMR0:=255-ON_PWM;
-           PWM_SIG:=0;
-         end;
+         // on
+         TMR0:=255-ON_PWM;
+         PWM_SIG:=0;
+         PWM_FLAG:=0;
        end else begin
+         // off
          TMR0:=255-PWM_MAX+ON_PWM;
          PWM_SIG:=1;
+         PWM_FLAG:=1;
        end;
        T0IF_bit:=0;
      end else
@@ -74,6 +73,21 @@ begin
      end;
 end;
 
+function Adc_Readx(ch:byte):word;
+begin
+  if ch=2 then
+    CHS0_bit:=0
+    else
+      CHS0_bit:=1;
+  ADON_bit:=1;
+  Delay_22us;
+  GO_NOT_DONE_bit:=1;
+  while GO_NOT_DONE_bit=1 do ;
+  Hi(Result):=ADRESH;
+  Lo(Result):=ADRESL;
+  ADON_bit:=0;
+end;
+
 begin
      CMCON:=7;
      ANSEL:=%00011100;       // 8/osc, AN3, AN2;
@@ -86,20 +100,23 @@ begin
      
      LED1:=0;
      PWM_SIG:=1;
+     PWM_FLAG:=1;
      LED1_tm:=250;
      ON_PWM:=0;
-     VOL_PWM:=PWM_MAX;
-     flag_inc:=False;
+     VOL_PWM:=PWM_LOW;
      TICK_1000:=0;
      power_prev:=0;
      offset_cur:=current_min;
+     last_cur:=0;
      {$ifdef USE_EEPROM}
      Hi(offset_cur):=EEPROM_Read(0);
      Lo(offset_cur):=EEPROM_Read(1);
      {$endif}
      VCFG_bit:=1;
+     CHS1_bit:=1;
+     ADFM_bit:=1;
 
-     OPTION_REG:=%11010000;        // ~2KHz @ 4MHz, enable weak pull-up
+     OPTION_REG:=%01010000;        // ~2KHz @ 4MHz, enable weak pull-up
      TMR0IE_bit:=1;
 
      PEIE_bit:=1;
@@ -116,24 +133,34 @@ begin
      GIE_bit:=1;                   // enable Interrupt
 
      TMR1ON_bit:=1;
-
-     Delay_10ms;
+     
+     VOL_PWM:=PWM_MAX div 2;
+     flag_inc:=True;
 
      while True do begin
        // get current
        temp_cur:=0;
-       for i:=0 to 60 do begin
-         adc_cur:=ADC_Read(2);
-         if temp_cur<adc_cur then
-           temp_cur:=adc_cur;
+       while PWM_FLAG=0 do ;
+       for i:=0 to 3 do begin
+         adc_cur:=Adc_Readx(2);
+         temp_cur:=temp_cur+adc_cur;
        end;
-       adc_cur:=temp_cur;
+       while PWM_FLAG=1 do ;
+       for i:=0 to 3 do begin
+         adc_cur:=Adc_Readx(2);
+         temp_cur:=temp_cur+adc_cur;
+       end;
+       adc_cur:=temp_cur div 8;
+
        if adc_cur>offset_cur then begin
          // get voltage
-         adc_vol:=ADC_Read(3);
+         adc_vol:=Adc_Readx(3);
          power_curr:= adc_cur * adc_vol;
          if power_curr<power_prev then
-           flag_inc:=not flag_inc;
+           flag_inc:=not flag_inc
+           else
+             if last_cur>adc_cur then
+               flag_inc:=not flag_inc;
          if flag_inc then begin
            if VOL_PWM<PWM_MAX then
              Inc(VOL_PWM);
@@ -147,7 +174,7 @@ begin
          flag_inc:=False;
          power_prev:=0;
        end;
-       //Delay_1ms;
+       last_cur:=adc_cur;
        // LED
        if VOL_PWM=PWM_MAX then
          LED1_tm:=125
