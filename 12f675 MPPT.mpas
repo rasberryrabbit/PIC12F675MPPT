@@ -40,7 +40,7 @@ var
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur, temp_cur, last_cur : word;
+   adc_vol, adc_cur, offset_cur : word;
    power_prev, power_curr: dword;
    i:byte;
    flag_inc :boolean;
@@ -109,7 +109,6 @@ begin
      TICK_1000:=0;
      power_prev:=0;
      offset_cur:=current_min;
-     last_cur:=0;
      {$ifdef USE_EEPROM}
      Hi(offset_cur):=EEPROM_Read(0);
      Lo(offset_cur):=EEPROM_Read(1);
@@ -150,10 +149,7 @@ begin
          adc_vol:=Adc_Readx(3);
          power_curr:= adc_cur * adc_vol;
          if power_curr<power_prev then
-           flag_inc:=not flag_inc
-           else
-             if last_cur>adc_cur then
-               flag_inc:=not flag_inc;
+           flag_inc:=not flag_inc;
          if flag_inc then begin
            if VOL_PWM<PWM_MAX then
              Inc(VOL_PWM);
@@ -173,7 +169,6 @@ begin
              Inc(VOL_PWM);
          end;
        end;
-       last_cur:=adc_cur;
        // LED
        if VOL_PWM=PWM_MAX then
          LED1_tm:=125
