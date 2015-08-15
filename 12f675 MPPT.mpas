@@ -24,8 +24,9 @@ program _12f675_MPPT;
 
 const
    { 4MHz }
-   PWM_MAX = 205;   // 1000000 / 2 / 205, ~2500Hz
+   PWM_MAX = 185;   // 1000000 / 2 / 185, ~2500Hz
    PWM_LOW = 0;
+   PWM_START = PWM_MAX * 95 div 100;
    
    current_min = 2;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
 
@@ -134,7 +135,7 @@ begin
 
      TMR1ON_bit:=1;
      
-     VOL_PWM:=PWM_MAX div 2;
+     VOL_PWM:=PWM_START;
      flag_inc:=True;
 
      while True do begin
@@ -170,7 +171,7 @@ begin
          end;
          power_prev:=power_curr;
        end else begin
-         VOL_PWM:=PWM_MAX div 2;
+         VOL_PWM:=PWM_START;
          flag_inc:=False;
          power_prev:=0;
        end;
