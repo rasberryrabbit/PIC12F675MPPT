@@ -36,8 +36,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Simple MPPT with 12F675"
-Date "2015-08-14"
-Rev "1.1a"
+Date "2015-08-15"
+Rev "1.1b"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -500,13 +500,9 @@ PV-Voltage
 Text Notes 8900 5200 2    60   ~ 0
 Heat Sink
 Wire Notes Line
-	6450 3750 9400 3750
+	9400 5850 9400 3750
 Wire Notes Line
-	9400 3750 9400 5850
-Wire Notes Line
-	9400 5850 6450 5850
-Wire Notes Line
-	6450 5850 6450 3750
+	5900 5850 9400 5850
 $Comp
 L R R11
 U 1 1 55C4C21C
@@ -662,20 +658,26 @@ Text Label 5550 3500 0    60   ~ 0
 $Comp
 L CP C5
 U 1 1 55CDDBD9
-P 8050 5150
-F 0 "C5" H 8075 5250 50  0000 L CNN
-F 1 "1u" H 8075 5050 50  0000 L CNN
-F 2 "" H 8088 5000 30  0000 C CNN
-F 3 "" H 8050 5150 60  0000 C CNN
-	1    8050 5150
+P 6000 4900
+F 0 "C5" H 6025 5000 50  0000 L CNN
+F 1 "2.2u(or higher)" H 6025 4800 50  0000 L CNN
+F 2 "" H 6038 4750 30  0000 C CNN
+F 3 "" H 6000 4900 60  0000 C CNN
+	1    6000 4900
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8050 5300 8050 5600
-Connection ~ 8050 5600
+	6000 5050 6000 5600
+Connection ~ 6000 5600
 Wire Wire Line
-	8050 5000 8050 4900
-Wire Wire Line
-	8050 4900 8400 4900
-Connection ~ 8400 4900
+	6000 4750 6000 3600
+Connection ~ 6000 3600
+Wire Notes Line
+	5900 3500 5900 5850
+Wire Notes Line
+	5900 3500 6450 3500
+Wire Notes Line
+	6450 3500 6450 3750
+Wire Notes Line
+	6450 3750 9400 3750
 $EndSCHEMATC
