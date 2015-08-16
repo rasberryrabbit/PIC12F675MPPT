@@ -24,11 +24,8 @@ program _12f675_MPPT;
 
 const
    { 4MHz }
-   PWM_MAX = 255;   // 1000000 / 2 / 255, ~2500Hz
-   PWM_LOW = 0;
-   PWM_START = PWM_MAX * 95 div 100;
-
-   current_min = 2;   // < 14mV(2), 15mV(3) / 5v * 1024, Calibrate at no load. rely on LM358 output.
+   PWM_MAX = 185;   // 1000000 / 2 / 185, ~2500Hz
+   PWM_LOW = 1;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
    TMR1H_LOAD=$fc;
@@ -44,7 +41,6 @@ var
    power_prev, power_curr: dword;
    i:byte;
    flag_inc :boolean;
-   offset_reset:Boolean;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -108,7 +104,6 @@ begin
      VOL_PWM:=PWM_LOW;
      TICK_1000:=0;
      power_prev:=0;
-     offset_cur:=current_min;
      {$ifdef USE_EEPROM}
      Hi(offset_cur):=EEPROM_Read(0);
      Lo(offset_cur):=EEPROM_Read(1);
@@ -135,47 +130,32 @@ begin
 
      TMR1ON_bit:=1;
 
-     VOL_PWM:=PWM_START;
-     flag_inc:=False;
-     offset_reset:=False;
+     VOL_PWM:=PWM_LOW;
+     flag_inc:=True;
 
      while True do begin
        // get current
        adc_cur:=Adc_Readx(2);
-
-       if adc_cur>offset_cur then begin
-         offset_reset:=False;
-         // get voltage
-         adc_vol:=Adc_Readx(3);
-         power_curr:= adc_cur * adc_vol;
-         if power_curr<power_prev then
-           flag_inc:=not flag_inc;
-         if flag_inc then begin
-           if VOL_PWM<PWM_MAX then
-             Inc(VOL_PWM);
-         end else begin
-           if VOL_PWM>PWM_LOW then
-             Dec(VOL_PWM);
-         end;
-         power_prev:=power_curr;
+       // get voltage
+       adc_vol:=Adc_Readx(3);
+       power_curr:= adc_cur * adc_vol;
+       if power_curr<power_prev then
+         flag_inc:=not flag_inc;
+       if flag_inc then begin
+         if VOL_PWM<PWM_MAX then
+           Inc(VOL_PWM);
        end else begin
-         if not offset_reset then begin
-           VOL_PWM:=PWM_START;
-           flag_inc:=False;
-           power_prev:=0;
-           offset_reset:=True;
-         end else begin
-           if VOL_PWM<PWM_MAX then
-             Inc(VOL_PWM);
-         end;
+         if VOL_PWM>PWM_LOW then
+           Dec(VOL_PWM);
        end;
+       power_prev:=power_curr;
        // LED
        if VOL_PWM=PWM_MAX then
-         LED1_tm:=125
+         LED1_tm:=250
          else
-           if adc_cur<=offset_cur then
+           if VOL_PWM=PWM_LOW then
              LED1_tm:=64
              else
-               LED1_tm:=250;
+               LED1_tm:=125;
      end;
 end.
