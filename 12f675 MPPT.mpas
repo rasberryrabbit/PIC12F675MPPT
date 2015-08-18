@@ -20,16 +20,14 @@ program _12f675_MPPT;
   MA 02111-1307, USA.
 }
 
-{$define USE_EEPROM}
-
 const
    { 4MHz }
-   PWM_MAX = 185;   // 1000000 / 2 / 185, ~2500Hz
+   PWM_MAX = 50;   // 25 * 2 (?)
    PWM_LOW = 1;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
    TMR1H_LOAD=$fc;
-
+   
 var
    LED1:sbit at GP5_bit;
    PWM_SIG:sbit at GP0_bit;
@@ -37,7 +35,7 @@ var
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur : word;
+   adc_vol, adc_cur, offset_cur, adc_prev : word;
    power_prev, power_curr: dword;
    i:byte;
    flag_inc :boolean;
@@ -103,16 +101,11 @@ begin
      ON_PWM:=0;
      VOL_PWM:=PWM_LOW;
      TICK_1000:=0;
-     power_prev:=0;
-     {$ifdef USE_EEPROM}
-     Hi(offset_cur):=EEPROM_Read(0);
-     Lo(offset_cur):=EEPROM_Read(1);
-     {$endif}
      VCFG_bit:=1;
      CHS1_bit:=1;
      ADFM_bit:=1;
 
-     OPTION_REG:=%01010000;        // ~2KHz @ 4MHz, enable weak pull-up
+     OPTION_REG:=%01010000;        // ~4KHz @ 4MHz, enable weak pull-up
      TMR0IE_bit:=1;
 
      PEIE_bit:=1;
@@ -125,6 +118,8 @@ begin
 
      adc_vol:=0;
      adc_cur:=0;
+     power_prev:=0;
+     adc_prev:=0;
 
      GIE_bit:=1;                   // enable Interrupt
 
@@ -134,28 +129,31 @@ begin
      flag_inc:=True;
 
      while True do begin
-       // get current
-       adc_cur:=Adc_Readx(2);
-       // get voltage
-       adc_vol:=Adc_Readx(3);
-       power_curr:= adc_cur * adc_vol;
-       if power_curr<power_prev then
-         flag_inc:=not flag_inc;
-       if flag_inc then begin
-         if VOL_PWM<PWM_MAX then
-           Inc(VOL_PWM);
-       end else begin
-         if VOL_PWM>PWM_LOW then
-           Dec(VOL_PWM);
-       end;
+       repeat
+         // get current
+         adc_cur:=Adc_Readx(2);
+         // get voltage
+         adc_vol:=Adc_Readx(3);
+         power_curr:= dword(adc_cur) * dword(adc_vol);
+         if power_curr<power_prev then begin
+           flag_inc:=not flag_inc;
+         end;
+         if flag_inc then begin
+           if VOL_PWM<PWM_MAX then
+             Inc(VOL_PWM);
+         end else begin
+           if VOL_PWM>PWM_LOW then
+             Dec(VOL_PWM);
+         end;
+       until power_curr>=power_prev;
        power_prev:=power_curr;
        // LED
        if VOL_PWM=PWM_MAX then
-         LED1_tm:=250
+         LED1_tm:=128
          else
            if VOL_PWM=PWM_LOW then
              LED1_tm:=64
              else
-               LED1_tm:=125;
+               LED1_tm:=250;
      end;
 end.
