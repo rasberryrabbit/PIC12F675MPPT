@@ -1,4 +1,5 @@
 main
+	EEPROM_Read
 	Adc_Readx
 		Delay_22us
 	Mul_32x32_U

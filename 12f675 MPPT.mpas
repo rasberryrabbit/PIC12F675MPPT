@@ -20,13 +20,19 @@ program _12f675_MPPT;
   MA 02111-1307, USA.
 }
 
+
+{$define USE_EEPROM_LM358DIFF}
+{.$define USE_LM358_AUTOCAL}
+
 const
    { 4MHz }
-   PWM_MAX = 50;   // 25 * 2 (?)
+   PWM_MAX = 100;
    PWM_LOW = 1;
 
    TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
    TMR1H_LOAD=$fc;
+   
+   cLM358_diff = 2;
    
 var
    LED1:sbit at GP5_bit;
@@ -37,7 +43,7 @@ var
    LED1_tm:byte;
    adc_vol, adc_cur, offset_cur, adc_prev : word;
    power_prev, power_curr: dword;
-   i:byte;
+   i,LM358_diff,brkLoop:byte;
    flag_inc :boolean;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
@@ -99,14 +105,19 @@ begin
      PWM_FLAG:=1;
      LED1_tm:=250;
      ON_PWM:=0;
-     VOL_PWM:=PWM_LOW;
+     VOL_PWM:=0;
      TICK_1000:=0;
      VCFG_bit:=1;
      CHS1_bit:=1;
      ADFM_bit:=1;
 
-     OPTION_REG:=%01010000;        // ~4KHz @ 4MHz, enable weak pull-up
+     OPTION_REG:=%01010000;        // ~4KHz @ 4MHz
      TMR0IE_bit:=1;
+     
+     LM358_diff:=cLM358_diff;
+     {$ifdef USE_EEPROM_LM358DIFF}
+     LM358_diff:=EEPROM_Read(0);
+     {$endif}
 
      PEIE_bit:=1;
 
@@ -125,27 +136,42 @@ begin
 
      TMR1ON_bit:=1;
 
+     {$ifdef USE_LM358_AUTOCAL}
+     Delay_ms(50);
+     LM358_diff:=Adc_Read(2);
+     {$endif}
+
      VOL_PWM:=PWM_LOW;
      flag_inc:=True;
 
      while True do begin
-       repeat
-         // get current
+       while True do begin
          adc_cur:=Adc_Readx(2);
-         // get voltage
          adc_vol:=Adc_Readx(3);
+         if adc_cur>LM358_diff then
+           adc_cur:=adc_cur-LM358_diff
+           else
+             adc_cur:=0;
          power_curr:= dword(adc_cur) * dword(adc_vol);
-         if power_curr<power_prev then begin
-           flag_inc:=not flag_inc;
-         end;
+         if power_curr<power_prev then
+           flag_inc:=not flag_inc
+           else if power_curr=power_prev then begin
+             if adc_cur>0 then
+              break
+              else
+                Inc(VOL_PWM);
+           end;
          if flag_inc then begin
            if VOL_PWM<PWM_MAX then
-             Inc(VOL_PWM);
+             Inc(VOL_PWM)
+             else
+               break;
          end else begin
            if VOL_PWM>PWM_LOW then
              Dec(VOL_PWM);
          end;
-       until power_curr>=power_prev;
+         power_prev:=power_curr;
+       end;
        power_prev:=power_curr;
        // LED
        if VOL_PWM=PWM_MAX then

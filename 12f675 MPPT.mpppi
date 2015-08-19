@@ -8,7 +8,7 @@ Value=0
 [ACTIVE_TAB]
 Value=12f675 MPPT.mpas
 [USE_EEPROM]
-Value=0
+Value=1
 [USE_HEAP]
 Value=0
 [HEAP_SIZE]
@@ -27,7 +27,8 @@ ActiveImageIndex=-1
 Count=1
 File0=12f675 MPPT.mpas
 [EEPROM]
-Count=0
+Count=1
+File0=12f675 MPPT.ihex
 [ACTIVE_COMMENTS_FILES]
 Count=0
 [OTHER_FILES]
