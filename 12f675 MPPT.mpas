@@ -146,8 +146,8 @@ begin
 
      while True do begin
        while True do begin
-         adc_cur:=Adc_Readx(2);
-         adc_vol:=Adc_Readx(3);
+         adc_cur:=Adc_Readx(3);
+         adc_vol:=Adc_Readx(2);
          if adc_cur>LM358_diff then
            adc_cur:=adc_cur-LM358_diff
            else
@@ -158,8 +158,9 @@ begin
            else if power_curr=power_prev then begin
              if adc_cur>0 then
               break
-              else
-                Inc(VOL_PWM);
+              else begin
+                flag_inc:=True;
+              end;
            end;
          if flag_inc then begin
            if VOL_PWM<PWM_MAX then
