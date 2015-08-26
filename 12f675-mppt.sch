@@ -36,8 +36,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Simple MPPT with 12F675"
-Date "2015-08-22"
-Rev "1.1e"
+Date "2015-08-26"
+Rev "1.1f"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -98,17 +98,6 @@ F 2 "" V 6830 5300 30  0000 C CNN
 F 3 "" H 6900 5300 30  0000 C CNN
 	1    6900 5300
 	1    0    0    -1  
-$EndComp
-$Comp
-L R R1
-U 1 1 55C344FE
-P 8650 4450
-F 0 "R1" V 8730 4450 50  0000 C CNN
-F 1 "4.7k" V 8650 4450 50  0000 C CNN
-F 2 "" V 8580 4450 30  0000 C CNN
-F 3 "" H 8650 4450 30  0000 C CNN
-	1    8650 4450
-	0    -1   -1   0   
 $EndComp
 $Comp
 L LM358N U2
@@ -205,8 +194,6 @@ Wire Wire Line
 Connection ~ 2650 4000
 Wire Wire Line
 	3050 3400 3850 3400
-Wire Wire Line
-	1600 5600 9050 5600
 Wire Wire Line
 	7400 5600 7400 5250
 Wire Wire Line
@@ -554,38 +541,6 @@ Connection ~ 8400 3950
 Text Notes 1400 3650 0    60   ~ 0
 Max 25V
 $Comp
-L D D6
-U 1 1 55CC95CF
-P 9050 4600
-F 0 "D6" H 9050 4700 50  0000 C CNN
-F 1 "D" H 9050 4500 50  0000 C CNN
-F 2 "" H 9050 4600 60  0000 C CNN
-F 3 "" H 9050 4600 60  0000 C CNN
-	1    9050 4600
-	0    -1   -1   0   
-$EndComp
-$Comp
-L LED D7
-U 1 1 55CC9696
-P 9050 5050
-F 0 "D7" H 9050 5150 50  0000 C CNN
-F 1 "LED" H 9050 4950 50  0000 C CNN
-F 2 "" H 9050 5050 60  0000 C CNN
-F 3 "" H 9050 5050 60  0000 C CNN
-	1    9050 5050
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	9050 5600 9050 5250
-Connection ~ 8400 5600
-Wire Wire Line
-	9050 4850 9050 4750
-Wire Wire Line
-	8800 4450 9050 4450
-Wire Wire Line
-	8850 4450 8850 5400
-Connection ~ 8850 4450
-$Comp
 L LED D9
 U 1 1 55CCC105
 P 5650 5350
@@ -627,8 +582,6 @@ Wire Wire Line
 Connection ~ 5650 5600
 Wire Wire Line
 	5650 4050 6000 4050
-Text Label 8950 4450 0    60   ~ 0
-2.5v
 Text Label 5350 3500 0    60   ~ 0
 3.6v
 $Comp
@@ -670,7 +623,7 @@ $EndComp
 Wire Wire Line
 	3500 6100 8150 6100
 Wire Wire Line
-	8150 4450 8150 6100
+	8150 6100 8150 4450
 Wire Wire Line
 	5250 3900 5250 4300
 Wire Wire Line
@@ -693,18 +646,26 @@ Wire Wire Line
 Wire Wire Line
 	5200 5000 5200 4400
 Connection ~ 5200 4400
-Connection ~ 8150 4450
 Wire Wire Line
 	5650 4500 5500 4500
 Wire Wire Line
-	5500 4500 5500 3500
+	5500 3500 5500 6000
 Connection ~ 5650 4500
-Wire Wire Line
-	6000 4450 8500 4450
 Wire Wire Line
 	6000 4050 6000 4450
 Wire Wire Line
 	5500 3500 5250 3500
 Wire Wire Line
 	8850 5400 8700 5400
+Wire Wire Line
+	5500 6000 8850 6000
+Wire Wire Line
+	8850 6000 8850 5400
+Connection ~ 5500 4500
+Wire Wire Line
+	6000 4450 8150 4450
+Wire Wire Line
+	1600 5600 8400 5600
+Text Label 8550 6000 0    60   ~ 0
+3.6v
 $EndSCHEMATC
