@@ -26,15 +26,15 @@ program _12f675_MPPT;
 
 const
    { 4MHz }
-   PWM_MAX = 100;
+   PWM_MAX = 41;            // 27 * 1.5
    PWM_LOW = 1;
 
-   TMR1L_LOAD=$17; // 1000000 / 1000, 65535-1000
+   TMR1L_LOAD=$17;          // 1000000 / 1000, 65535-1000
    TMR1H_LOAD=$fc;
    
    cLM358_diff = 2;
-   cWeight_curr = 5;
-   
+   pwm_loop_max = 2;
+
 var
    LED1:sbit at GP5_bit;
    PWM_SIG:sbit at GP0_bit;
@@ -42,10 +42,10 @@ var
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur, adc_prev : word;
-   power_prev, power_curr, power_last_equal : dword;
-   i,LM358_diff:byte;
-   flag_inc, got_inc :boolean;
+   adc_vol, adc_cur, offset_cur, adc_prev, adc_diff : word;
+   power_prev, power_curr, power_diff : dword;
+   i, LM358_diff:byte;
+   flag_inc, got_max :boolean;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -76,21 +76,9 @@ begin
      end;
 end;
 
-function Adc_Readx(ch:byte):word;
-begin
-  if ch=2 then
-    CHS0_bit:=0
-    else
-      CHS0_bit:=1;
-  GO_NOT_DONE_bit:=1;
-  while GO_NOT_DONE_bit=1 do ;
-  Hi(Result):=ADRESH;
-  Lo(Result):=ADRESL;
-end;
-
 begin
      CMCON:=7;
-     ANSEL:=%00011100;       // 8/osc, AN3, AN2;
+     ANSEL:=%00111100;       // ADC conversion clock = fRC, AN3, AN2;
 
      TRISIO0_bit:=0;      // PWM
      TRISIO1_bit:=1;      // not Connected
@@ -128,7 +116,6 @@ begin
      adc_vol:=0;
      adc_cur:=0;
      power_prev:=0;
-     power_last_equal:=0;
      adc_prev:=0;
 
      GIE_bit:=1;                   // enable Interrupt
@@ -142,59 +129,57 @@ begin
 
      VOL_PWM:=PWM_LOW;
      flag_inc:=True;
-
+     adc_prev:=0;
+     got_max:=False;
+     
      while True do begin
-       got_inc:=False;
-       repeat
-         power_prev:=power_curr;
-         ADON_bit:=1;
-         Delay_22us;
-         adc_vol:=Adc_Readx(3);
-         adc_cur:=Adc_Readx(2);
-         ADON_bit:=0;
-         if adc_cur>LM358_diff then
-           adc_cur:=adc_cur-LM358_diff
-           else
-             adc_cur:=0;
-         power_curr:= adc_cur * adc_vol;
-         if power_curr<power_prev then begin
-           if got_inc then begin
-             if flag_inc then begin
-               if VOL_PWM>PWM_LOW then
-                 Dec(VOL_PWM);
-             end else begin
-               if VOL_PWM<PWM_MAX then
-                 Inc(VOL_PWM);
-             end;
-             break;
-           end;
-           flag_inc:=not flag_inc;
-         end else begin
-           got_inc:=True;
-           if power_curr=power_prev then begin
-             if not flag_inc then
-               if VOL_PWM<PWM_MAX then
-                 Inc(VOL_PWM);
-             break;
-           end;
-         end;
-         
-         if flag_inc then begin
-           if VOL_PWM<PWM_MAX then
-             Inc(VOL_PWM);
-         end else begin
-           if VOL_PWM>PWM_LOW then
-             Dec(VOL_PWM);
-         end;
-       until power_curr=power_prev;
-
        // LED
-       if VOL_PWM=PWM_MAX then
-         LED1_tm:=128
+       if (VOL_PWM>=(PWM_MAX-1)) or (VOL_PWM=PWM_LOW) then
+         LED1_tm:=64;
+
+       power_prev:=power_curr;
+       adc_prev:=adc_cur;
+       for i:=0 to 3 do begin
+         adc_vol:=adc_vol+ADC_Read(3);
+         adc_cur:=adc_cur+ADC_Read(2);
+       end;
+       adc_vol:=adc_vol div 4;
+       adc_cur:=adc_cur div 4;
+       
+       if adc_cur>LM358_diff then
+         adc_cur:=adc_cur-LM358_diff
          else
-           if VOL_PWM=PWM_LOW then
-             LED1_tm:=64
-             else
-               LED1_tm:=250;
+           adc_cur:=0;
+       power_curr:= adc_cur * adc_vol;
+       
+       if adc_cur>0 then begin
+         LED1_tm:=128;
+         if power_curr<power_prev then begin
+           flag_inc:=not flag_inc;
+           got_max:=False;
+         end else if power_curr=power_prev then begin
+           if got_max then begin
+             LED1_tm:=250;
+             continue;
+           end;
+         end else
+           got_max:=True;
+       end else begin
+         flag_inc:=True;
+         LED1_tm:=64;
+         got_max:=False;
+       end;
+
+       if flag_inc then begin
+         if VOL_PWM<PWM_MAX then
+           Inc(VOL_PWM)
+           else
+             flag_inc:=False;
+       end else begin
+         if VOL_PWM>PWM_LOW then
+           Dec(VOL_PWM)
+           else
+             flag_inc:=True;
+       end;
      end;
 end.
