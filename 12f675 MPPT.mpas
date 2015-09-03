@@ -26,11 +26,11 @@ program _12f675_MPPT;
 
 const
    { 4MHz }
-   PWM_MAX = 41;            // 27 * 1.5
+   PWM_MAX = 75;
    PWM_LOW = 1;
 
-   TMR1L_LOAD=$17;          // 1000000 / 1000, 65535-1000
-   TMR1H_LOAD=$fc;
+   TMR1L_LOAD=$17;
+   TMR1H_LOAD=$FC;
    
    cLM358_diff = 2;
    pwm_loop_max = 2;
@@ -63,16 +63,6 @@ begin
          PWM_FLAG:=1;
        end;
        T0IF_bit:=0;
-     end else
-     if T1IF_bit=1 then begin
-       Inc(TICK_1000);
-       TMR1L:=TMR1L_LOAD;
-       TMR1H:=TMR1H_LOAD;
-       if TICK_1000>LED1_Tm then begin
-         LED1:=not LED1;
-         TICK_1000:=0;
-       end;
-       T1IF_bit:=0;
      end;
 end;
 
@@ -97,7 +87,7 @@ begin
      CHS1_bit:=1;
      ADFM_bit:=1;
 
-     OPTION_REG:=%01010000;        // ~4KHz @ 4MHz
+     OPTION_REG:=%01011000;        // ~4KHz @ 4MHz
      TMR0IE_bit:=1;
      
      LM358_diff:=cLM358_diff;
@@ -105,11 +95,8 @@ begin
      LM358_diff:=EEPROM_Read(0);
      {$endif}
 
-     PEIE_bit:=1;
-
      T1CKPS0_bit:=1;               // timer prescaler 1:2
      TMR1CS_bit:=0;
-     TMR1IE_bit:=1;
      TMR1L:=TMR1L_LOAD;
      TMR1H:=TMR1H_LOAD;
 
@@ -134,6 +121,16 @@ begin
      
      while True do begin
        // LED
+       if T1IF_bit=1 then begin
+         TMR1H:=TMR1H_LOAD;
+         TMR1L:=TMR1L_LOAD;
+         T1IF_bit:=0;
+         Inc(TICK_1000);
+         if TICK_1000>=LED1_tm then begin
+           LED1:=not LED1;
+           TICK_1000:=0;
+         end;
+       end;
        if (VOL_PWM>=(PWM_MAX-1)) or (VOL_PWM=PWM_LOW) then
          LED1_tm:=64;
 
@@ -161,7 +158,9 @@ begin
            if got_max then begin
              LED1_tm:=250;
              continue;
-           end;
+           end else 
+             if not flag_inc then
+               flag_inc:=not flag_inc;
          end else
            got_max:=True;
        end else begin
