@@ -34,6 +34,8 @@ const
    
    cLM358_diff = 2;
    pwm_loop_max = 2;
+   eq_count_max = 10;
+   eq_conti_max = 5;
 
 var
    LED1:sbit at GP5_bit;
@@ -46,6 +48,7 @@ var
    power_prev, power_curr, power_diff : dword;
    i, LM358_diff:byte;
    flag_inc, got_max :boolean;
+   eq_cnt, eq_conti_cnt : byte;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -154,15 +157,36 @@ begin
          if power_curr<power_prev then begin
            flag_inc:=not flag_inc;
            got_max:=False;
+           eq_cnt:=eq_count_max;
+           eq_conti_cnt:=eq_conti_max;
          end else if power_curr=power_prev then begin
            if got_max then begin
              LED1_tm:=250;
-             continue;
-           end else 
+             if eq_cnt>0 then
+               Dec(eq_cnt);
+             if eq_cnt=0 then begin
+               if eq_conti_cnt>0 then
+                 Dec(eq_conti_cnt);
+               if eq_conti_cnt>0 then
+                 continue
+                 else begin
+                   eq_conti_cnt:=eq_conti_max;
+                   flag_inc:=True;
+                   if VOL_PWM<PWM_MAX then
+                     Inc(VOL_PWM);
+                 end;
+             end;
+           end else begin
              if not flag_inc then
                flag_inc:=not flag_inc;
-         end else
+             eq_cnt:=eq_count_max;
+             eq_conti_cnt:=eq_conti_max;
+           end;
+         end else begin
            got_max:=True;
+           eq_cnt:=eq_count_max;
+           eq_conti_cnt:=eq_conti_max;
+         end;
        end else begin
          flag_inc:=True;
          LED1_tm:=64;
