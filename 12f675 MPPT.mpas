@@ -26,7 +26,7 @@ program _12f675_MPPT;
 
 const
    { 4MHz }
-   PWM_MAX = 75;
+   PWM_MAX = 75;            // 75
    PWM_LOW = 1;
 
    TMR1L_LOAD=$17;
@@ -152,14 +152,19 @@ begin
        
        if adc_cur>0 then begin
          if power_curr=power_prev then begin
-           if not flag_inc then
-             continue;
-           if eq_cnt>0 then
-             Dec(eq_cnt);
-           if eq_cnt=0 then begin
-             LED1_tm:=240;
-             continue;
-           end;
+           LED1_tm:=240;
+           if adc_cur=adc_prev then
+             continue
+             else begin
+               if not flag_inc then begin
+                 if adc_cur<adc_prev then
+                   continue;
+               end else begin
+                 if adc_cur>adc_prev then
+                   continue;
+               end;
+             end;
+           flag_inc:=not flag_inc;
          end else begin
            LED1_tm:=120;
            eq_cnt:=eq_count_max;
