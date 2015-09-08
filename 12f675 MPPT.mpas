@@ -26,14 +26,14 @@ program _12f675_MPPT;
 
 const
    { 4MHz }
-   PWM_MAX = 75;            // 75
+   PWM_MAX = 127;            // 75
    PWM_LOW = 1;
 
    TMR1L_LOAD=$17;
    TMR1H_LOAD=$FC;
    
    cLM358_diff = 2;
-   eq_count_max = 2;
+   Inc_Pwm_Max = 3;
 
 var
    LED1:sbit at GP5_bit;
@@ -46,7 +46,7 @@ var
    power_prev, power_curr, power_diff : dword;
    i, LM358_diff:byte;
    flag_inc, got_max :boolean;
-   eq_cnt : byte;
+   Inc_pwm, eq_cnt : byte;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -137,12 +137,12 @@ begin
 
        power_prev:=power_curr;
        adc_prev:=adc_cur;
-       for i:=0 to 3 do begin
+       for i:=0 to 1 do begin
          adc_vol:=adc_vol+ADC_Read(3);
          adc_cur:=adc_cur+ADC_Read(2);
        end;
-       adc_vol:=adc_vol div 4;
-       adc_cur:=adc_cur div 4;
+       adc_vol:=adc_vol div 2;
+       adc_cur:=adc_cur div 2;
        
        if adc_cur>LM358_diff then
          adc_cur:=adc_cur-LM358_diff
@@ -152,41 +152,42 @@ begin
        
        if adc_cur>0 then begin
          if power_curr=power_prev then begin
-           LED1_tm:=240;
-           if adc_cur=adc_prev then
-             continue
-             else begin
-               if not flag_inc then begin
-                 if adc_cur<adc_prev then
-                   continue;
-               end else begin
-                 if adc_cur>adc_prev then
-                   continue;
-               end;
-             end;
-           flag_inc:=not flag_inc;
+           if adc_cur>adc_prev then begin
+             LED1_tm:=32;
+           end else
+           if adc_cur<adc_prev then begin
+             LED1_tm:=32;
+           end else begin
+             LED1_tm:=240;
+             flag_inc:=not flag_inc;
+             if Inc_pwm>1 then
+               Dec(Inc_pwm);
+           end;
          end else begin
            LED1_tm:=120;
-           eq_cnt:=eq_count_max;
-           if power_curr<power_prev then
-             flag_inc:=not flag_inc;
+           Inc_pwm:=Inc_Pwm_Max;
+           if power_curr<power_prev then begin
+             if not flag_inc then begin
+               flag_inc:=true
+             end else begin
+               flag_inc:=False;
+             end;
+           end;
          end;
        end else begin
          flag_inc:=True;
+         Inc_pwm:=Inc_Pwm_Max;
          LED1_tm:=64;
-         eq_cnt:=eq_count_max;
        end;
 
        if flag_inc then begin
-         if VOL_PWM<PWM_MAX then
-           Inc(VOL_PWM)
+         if VOL_PWM<(PWM_MAX-Inc_pwm) then
+           VOL_PWM:=VOL_PWM+Inc_pwm
            else
-             flag_inc:=False;
+             VOL_PWM:=PWM_MAX;
        end else begin
          if VOL_PWM>PWM_LOW then
-           Dec(VOL_PWM)
-           else
-             flag_inc:=True;
+           Dec(VOL_PWM);
        end;
      end;
 end.
