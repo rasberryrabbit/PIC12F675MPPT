@@ -367,17 +367,17 @@ L__main40:
 	MOVWF      _LED1_tm+0
 ;12f675 MPPT.mpas,162 :: 		flag_inc:=not flag_inc;
 	COMF       _flag_inc+0, 1
-;12f675 MPPT.mpas,163 :: 		if Inc_pwm>1 then
+;12f675 MPPT.mpas,163 :: 		end;
+L__main41:
+L__main38:
+;12f675 MPPT.mpas,164 :: 		if Inc_pwm>1 then
 	MOVF       _Inc_pwm+0, 0
 	SUBLW      1
 	BTFSC      STATUS+0, 0
 	GOTO       L__main43
-;12f675 MPPT.mpas,164 :: 		Dec(Inc_pwm);
+;12f675 MPPT.mpas,165 :: 		Dec(Inc_pwm);
 	DECF       _Inc_pwm+0, 1
 L__main43:
-;12f675 MPPT.mpas,165 :: 		end;
-L__main41:
-L__main38:
 ;12f675 MPPT.mpas,166 :: 		end else begin
 	GOTO       L__main35
 L__main34:
@@ -463,19 +463,34 @@ L__main56:
 ;12f675 MPPT.mpas,188 :: 		end else begin
 	GOTO       L__main53
 L__main52:
-;12f675 MPPT.mpas,189 :: 		if VOL_PWM>PWM_LOW then
+;12f675 MPPT.mpas,189 :: 		if VOL_PWM>(PWM_LOW+(Inc_Pwm_Max+1-Inc_pwm)) then
+	MOVF       _Inc_pwm+0, 0
+	SUBLW      4
+	MOVWF      R0+0
+	INCF       R0+0, 0
+	MOVWF      R1+0
 	MOVF       _VOL_PWM+0, 0
-	SUBLW      1
+	SUBWF      R1+0, 0
 	BTFSC      STATUS+0, 0
 	GOTO       L__main58
-;12f675 MPPT.mpas,190 :: 		Dec(VOL_PWM);
-	DECF       _VOL_PWM+0, 1
+;12f675 MPPT.mpas,190 :: 		VOL_PWM:=VOL_PWM-(Inc_Pwm_Max+1-Inc_pwm)
+	MOVF       _Inc_pwm+0, 0
+	SUBLW      4
+	MOVWF      R0+0
+	MOVF       R0+0, 0
+	SUBWF      _VOL_PWM+0, 1
+	GOTO       L__main59
+;12f675 MPPT.mpas,191 :: 		else
 L__main58:
-;12f675 MPPT.mpas,191 :: 		end;
+;12f675 MPPT.mpas,192 :: 		VOL_PWM:=PWM_LOW;
+	MOVLW      1
+	MOVWF      _VOL_PWM+0
+L__main59:
+;12f675 MPPT.mpas,193 :: 		end;
 L__main53:
-;12f675 MPPT.mpas,192 :: 		end;
+;12f675 MPPT.mpas,194 :: 		end;
 	GOTO       L__main9
-;12f675 MPPT.mpas,193 :: 		end.
+;12f675 MPPT.mpas,195 :: 		end.
 L_end_main:
 	GOTO       $+0
 ; end of _main

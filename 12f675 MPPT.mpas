@@ -160,9 +160,9 @@ begin
            end else begin
              LED1_tm:=240;
              flag_inc:=not flag_inc;
-             if Inc_pwm>1 then
-               Dec(Inc_pwm);
            end;
+           if Inc_pwm>1 then
+             Dec(Inc_pwm);
          end else begin
            LED1_tm:=120;
            Inc_pwm:=Inc_Pwm_Max;
@@ -186,8 +186,10 @@ begin
            else
              VOL_PWM:=PWM_MAX;
        end else begin
-         if VOL_PWM>PWM_LOW then
-           Dec(VOL_PWM);
+         if VOL_PWM>(PWM_LOW+(Inc_Pwm_Max+1-Inc_pwm)) then
+           VOL_PWM:=VOL_PWM-(Inc_Pwm_Max+1-Inc_pwm)
+           else
+             VOL_PWM:=PWM_LOW;
        end;
      end;
 end.
