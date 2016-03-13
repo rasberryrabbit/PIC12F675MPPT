@@ -27,7 +27,7 @@ program _12f675_MPPT;
 const
    { 4MHz }
    PWM_MAX = 127;            // 75
-   PWM_90  = 114;            // PWM_MAX * 0.90
+   PWM_95  = 120;            // PWM_MAX * 0.95
    PWM_LOW = 1;
 
    TMR1L_LOAD=$17;
@@ -61,7 +61,7 @@ begin
        end else begin
          // off
          TMR0:=255-PWM_MAX+ON_PWM;
-         if ON_PWM<PWM_90 then
+         if ON_PWM<PWM_95 then
             PWM_SIG:=1
             else
               PWM_SIG:=0;

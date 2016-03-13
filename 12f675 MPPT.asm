@@ -33,8 +33,8 @@ L__Interrupt5:
 	MOVF       _ON_PWM+0, 0
 	ADDLW      128
 	MOVWF      TMR0+0
-;12f675 MPPT.mpas,64 :: 		if ON_PWM<PWM_90 then
-	MOVLW      114
+;12f675 MPPT.mpas,64 :: 		if ON_PWM<PWM_95 then
+	MOVLW      120
 	SUBWF      _ON_PWM+0, 0
 	BTFSC      STATUS+0, 0
 	GOTO       L__Interrupt8
