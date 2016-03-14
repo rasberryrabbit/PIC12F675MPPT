@@ -3,5 +3,4 @@ main
 	ADC_Read
 		Delay_22us
 	Mul_32x32_U
-	Delay_80us
 Interrupt

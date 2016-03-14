@@ -32,7 +32,10 @@ const
    TMR1L_LOAD=$17;
    TMR1H_LOAD=$FC;
    
-   cLM358_diff = 2;
+   { circuit modified, 55mV / 3600mV * 1024 + 1, eeprom offset 0 => 0x11(17)
+     circuit v2 has more sensivity on current adc reading( x11 ),
+     it may value 22 but 17. measuring on PIC pin 5 voltage while no loading  }
+   cLM358_diff = 17;
    Inc_Pwm_Max = 2;
 
 var
@@ -194,7 +197,5 @@ begin
          end else
              VOL_PWM:=PWM_LOW;
        end;
-       Delay_80us;
-       Delay_80us;
      end;
 end.

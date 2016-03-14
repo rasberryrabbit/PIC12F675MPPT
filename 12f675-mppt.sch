@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:12f675-mppt-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -100,7 +101,7 @@ F 3 "" H 6900 5300 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LM358N U2
+L LM358N-RESCUE-12f675-mppt U2
 U 2 1 55C3383E
 P 7500 4850
 F 0 "U2" H 7450 5050 60  0000 L CNN
@@ -190,7 +191,7 @@ $EndComp
 Wire Wire Line
 	2650 4000 3850 4000
 Wire Wire Line
-	2650 5600 2650 3700
+	2650 3700 2650 5600
 Connection ~ 2650 4000
 Wire Wire Line
 	3050 3400 3850 3400
@@ -204,9 +205,6 @@ Wire Wire Line
 Connection ~ 6900 5600
 Wire Wire Line
 	7200 4250 8000 4250
-Wire Wire Line
-	8000 3600 8000 4850
-Connection ~ 8000 4250
 Wire Wire Line
 	7000 4950 6900 4950
 Wire Wire Line
@@ -473,9 +471,7 @@ PV-Voltage
 Text Notes 8900 5200 2    60   ~ 0
 Heat Sink
 Wire Notes Line
-	9400 5850 9400 3750
-Wire Notes Line
-	5900 5850 9400 5850
+	5900 5850 9800 5850
 $Comp
 L R R11
 U 1 1 55C4C21C
@@ -487,8 +483,6 @@ F 3 "" H 6400 3600 30  0000 C CNN
 	1    6400 3600
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	6550 3600 8000 3600
 Wire Wire Line
 	5250 3600 6250 3600
 $Comp
@@ -608,7 +602,7 @@ Wire Notes Line
 Wire Notes Line
 	6500 3500 6700 3750
 Wire Notes Line
-	6700 3750 9400 3750
+	6700 3750 9800 3750
 $Comp
 L CP C6
 U 1 1 55D02AF9
@@ -623,7 +617,7 @@ $EndComp
 Wire Wire Line
 	3500 6100 8150 6100
 Wire Wire Line
-	8150 6100 8150 4450
+	8150 4450 8150 6100
 Wire Wire Line
 	5250 3900 5250 4300
 Wire Wire Line
@@ -663,9 +657,72 @@ Wire Wire Line
 	8850 6000 8850 5400
 Connection ~ 5500 4500
 Wire Wire Line
-	6000 4450 8150 4450
+	6000 4450 8450 4450
 Wire Wire Line
-	1600 5600 8400 5600
+	9450 5600 1600 5600
 Text Label 8550 6000 0    60   ~ 0
 3.6v
+$Comp
+L LM358N-RESCUE-12f675-mppt U2
+U 1 1 56E669E2
+P 8850 4350
+F 0 "U2" H 8800 4550 60  0000 L CNN
+F 1 "LM358N" H 8800 4100 60  0000 L CNN
+F 2 "" H 8850 4350 60  0000 C CNN
+F 3 "" H 8850 4350 60  0000 C CNN
+	1    8850 4350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	8000 4250 8000 4850
+Wire Wire Line
+	8000 4850 8750 4850
+Wire Wire Line
+	8850 3850 8850 3600
+Wire Wire Line
+	6550 3600 9650 3600
+$Comp
+L R R1
+U 1 1 56E67518
+P 9200 4850
+F 0 "R1" V 9280 4850 50  0000 C CNN
+F 1 "10k" V 9200 4850 50  0000 C CNN
+F 2 "" V 9130 4850 50  0000 C CNN
+F 3 "" H 9200 4850 50  0000 C CNN
+	1    9200 4850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9450 4450 9450 5600
+Connection ~ 8400 5600
+Wire Wire Line
+	9050 4850 8950 4850
+Wire Wire Line
+	9450 4450 9250 4450
+Connection ~ 9450 4850
+Connection ~ 8150 4450
+$Comp
+L R R15
+U 1 1 56E68956
+P 9650 4300
+F 0 "R15" V 9730 4300 50  0000 C CNN
+F 1 "100k" V 9650 4300 50  0000 C CNN
+F 2 "" V 9580 4300 50  0000 C CNN
+F 3 "" H 9650 4300 50  0000 C CNN
+	1    9650 4300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9650 5100 9650 4450
+Wire Wire Line
+	9650 3600 9650 4150
+Connection ~ 8850 3600
+Wire Notes Line
+	9800 3750 9800 5850
+Wire Wire Line
+	9350 4850 9450 4850
+Wire Wire Line
+	9650 5100 8950 5100
+Wire Wire Line
+	8950 5100 8950 4850
 $EndSCHEMATC
