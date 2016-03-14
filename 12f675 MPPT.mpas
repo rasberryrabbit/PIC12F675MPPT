@@ -32,10 +32,10 @@ const
    TMR1L_LOAD=$17;
    TMR1H_LOAD=$FC;
    
-   { circuit modified, 55mV / 3600mV * 1024 + 1, eeprom offset 0 => 0x11(17)
-     circuit v2 has more sensivity on current adc reading( x11 ),
-     it may value 22 but 17. measuring on PIC pin 5 voltage while no loading  }
-   cLM358_diff = 17;
+   { circuit modified, 9.6mV / 3600mV * 1024 + 1, eeprom offset 0 => 04
+     circuit v2 has more sensivity on current adc reading( x4 ),
+     it may value 6 but 4. measuring on PIC pin 5 voltage while no loading  }
+   cLM358_diff = 4;
    Inc_Pwm_Max = 2;
 
 var

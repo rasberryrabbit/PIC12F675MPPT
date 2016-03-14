@@ -100,7 +100,7 @@ _main:
 ;12f675 MPPT.mpas,95 :: 		TMR0IE_bit:=1;
 	BSF        TMR0IE_bit+0, BitPos(TMR0IE_bit+0)
 ;12f675 MPPT.mpas,97 :: 		LM358_diff:=cLM358_diff;
-	MOVLW      17
+	MOVLW      4
 	MOVWF      _LM358_diff+0
 ;12f675 MPPT.mpas,99 :: 		LM358_diff:=EEPROM_Read(0);
 	CLRF       FARG_EEPROM_Read_address+0
