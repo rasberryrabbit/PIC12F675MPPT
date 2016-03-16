@@ -91,7 +91,7 @@ begin
      CHS1_bit:=1;
      ADFM_bit:=1;
 
-     OPTION_REG:=%01011000;        // ~4KHz @ 4MHz
+     OPTION_REG:=%01011111;        // ~4KHz @ 4MHz
      TMR0IE_bit:=1;
      
      LM358_diff:=cLM358_diff;
@@ -106,7 +106,7 @@ begin
 
      adc_vol:=0;
      adc_cur:=0;
-     power_prev:=0;
+     power_curr:=0;
 
      GIE_bit:=1;                   // enable Interrupt
 
@@ -120,8 +120,7 @@ begin
      VOL_PWM:=PWM_LOW;
      flag_inc:=True;
      adc_prev:=0;
-     got_max:=False;
-     
+
      while True do begin
        // LED
        if T1IF_bit=1 then begin
@@ -134,12 +133,16 @@ begin
            TICK_1000:=0;
          end;
        end;
-       if (VOL_PWM>=(PWM_MAX-1)) or (VOL_PWM=PWM_LOW) then
-         LED1_tm:=64;
-
+       if (VOL_PWM>=(PWM_MAX-1)) then
+         LED1_tm:=64
+         else if (VOL_PWM=PWM_LOW) then
+           LED1_tm:=90
+           else
+             LED1_tm:=120;
+       // save previous adc values
        power_prev:=power_curr;
        adc_prev:=adc_cur;
-       //
+       // read adc value
        adc_vol:=0;
        adc_cur:=0;
        for i:=0 to 1 do begin
@@ -148,44 +151,38 @@ begin
        end;
        adc_vol:=adc_vol div 2;
        adc_cur:=adc_cur div 2;
-       
+       // sub op-amp offset value
        if adc_cur>LM358_diff then
          adc_cur:=adc_cur-LM358_diff
-         else begin
+         else
            adc_cur:=0;
-           power_prev:=0;
-           LED1_tm:=64;
-           flag_inc:=True;
-         end;
-
+       //
        if adc_cur>0 then begin
          power_curr:= adc_cur * adc_vol;
          if power_curr=power_prev then begin
+           Inc_pwm:=Inc_Pwm_Max-1;
            if adc_cur>adc_prev then begin
-             Inc_pwm:=1;
-             LED1_tm:=32;
-             flag_inc:=True;
+             flag_inc:=False;
            end else
            if adc_cur<adc_prev then begin
-             Inc_pwm:=1;
-             LED1_tm:=32;
-             flag_inc:=False;
+             flag_inc:=True;
            end else begin
              Inc_pwm:=0;
              LED1_tm:=240;
              flag_inc:=not flag_inc;
            end;
          end else begin
-           LED1_tm:=120;
-           Inc(Inc_pwm);
-           if Inc_pwm>Inc_Pwm_Max then
-             Inc_pwm:=Inc_Pwm_Max;
+           Inc_pwm:=Inc_Pwm_Max;
            if power_curr<power_prev then
              flag_inc:=not flag_inc;
          end;
-         power_prev:=power_curr;
+       end else begin
+         // no load or low current
+         power_curr:=0;
+         Inc_pwm:=Inc_Pwm_Max;
+         flag_inc:=True;
        end;
-
+       // PWM
        if flag_inc then begin
          if VOL_PWM<(PWM_MAX-Inc_pwm) then begin
            VOL_PWM:=VOL_PWM+Inc_pwm;
