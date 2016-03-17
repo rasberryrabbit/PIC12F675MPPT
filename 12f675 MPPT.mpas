@@ -36,7 +36,8 @@ const
      circuit v2 has more sensivity on current adc reading( x4 ),
      it may value 6 but 4. measuring on PIC pin 5 voltage while no loading  }
    cLM358_diff = 4;
-   Inc_Pwm_Max = 2;
+   Inc_Pwm_Max = 10;
+   adc_max_loop = 1;
 
 var
    LED1:sbit at GP5_bit;
@@ -50,6 +51,7 @@ var
    i, LM358_diff:byte;
    flag_inc, got_max :boolean;
    Inc_pwm, eq_cnt : byte;
+   vol1, vol2 : byte;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -107,6 +109,8 @@ begin
      adc_vol:=0;
      adc_cur:=0;
      power_curr:=0;
+     vol1:=0;
+     vol2:=0;
 
      GIE_bit:=1;                   // enable Interrupt
 
@@ -145,12 +149,12 @@ begin
        // read adc value
        adc_vol:=0;
        adc_cur:=0;
-       for i:=0 to 1 do begin
-         adc_vol:=adc_vol+ADC_Read(3);
+       for i:=0 to adc_max_loop-1 do begin
          adc_cur:=adc_cur+ADC_Read(2);
+         adc_vol:=adc_vol+ADC_Read(3);
        end;
-       adc_vol:=adc_vol div 2;
-       adc_cur:=adc_cur div 2;
+       adc_vol:=adc_vol div adc_max_loop;
+       adc_cur:=adc_cur div adc_max_loop;
        // sub op-amp offset value
        if adc_cur>LM358_diff then
          adc_cur:=adc_cur-LM358_diff
@@ -160,7 +164,8 @@ begin
        if adc_cur>0 then begin
          power_curr:= adc_cur * adc_vol;
          if power_curr=power_prev then begin
-           Inc_pwm:=Inc_Pwm_Max-1;
+           if Inc_pwm>Inc_Pwm_Max then
+             Dec(Inc_pwm);
            if adc_cur>adc_prev then begin
              flag_inc:=False;
            end else
@@ -172,15 +177,32 @@ begin
              flag_inc:=not flag_inc;
            end;
          end else begin
-           Inc_pwm:=Inc_Pwm_Max;
-           if power_curr<power_prev then
+           if Inc_pwm<Inc_Pwm_Max then
+             Inc(Inc_pwm);
+           if power_curr<power_prev then begin
+             { (1) ---> lowpower1 PWM
+               (2) reverse direction
+               (3) equal power PWM ---> low power2 PWM
+             }
+             vol1:=vol2;
+             vol2:=VOL_PWM;
              flag_inc:=not flag_inc;
+             { (4) set average PWM }
+             if (vol1<>0) and (vol2<>0) then begin
+               Inc_pwm:=0;
+               VOL_PWM:=(vol1+vol2) div 2;
+               vol2:=0;
+               continue;
+             end;
+           end else
+             vol2:=0;
          end;
        end else begin
          // no load or low current
          power_curr:=0;
          Inc_pwm:=Inc_Pwm_Max;
          flag_inc:=True;
+         vol2:=0;
        end;
        // PWM
        if flag_inc then begin
