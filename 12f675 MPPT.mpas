@@ -173,6 +173,7 @@ begin
            end else
            if adc_cur<adc_prev then begin
              flag_inc:=True;
+             Inc_pwm:=1;
            end else begin
              Inc_pwm:=0;
              LED1_tm:=240;
