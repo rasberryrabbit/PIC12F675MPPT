@@ -164,7 +164,7 @@ begin
        if adc_cur>0 then begin
          power_curr:= adc_cur * adc_vol;
          if power_curr=power_prev then begin
-           if Inc_pwm>Inc_Pwm_Max then
+           if Inc_pwm>1 then
              Dec(Inc_pwm);
            if adc_cur>adc_prev then begin
              flag_inc:=False;

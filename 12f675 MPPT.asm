@@ -325,9 +325,9 @@ L__main70:
 L__main71:
 	BTFSS      STATUS+0, 2
 	GOTO       L__main37
-;12f675 MPPT.mpas,167 :: 		if Inc_pwm>Inc_Pwm_Max then
+;12f675 MPPT.mpas,167 :: 		if Inc_pwm>1 then
 	MOVF       _Inc_pwm+0, 0
-	SUBLW      10
+	SUBLW      1
 	BTFSC      STATUS+0, 0
 	GOTO       L__main40
 ;12f675 MPPT.mpas,168 :: 		Dec(Inc_pwm);
