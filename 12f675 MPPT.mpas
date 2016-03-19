@@ -22,7 +22,7 @@ program _12f675_MPPT;
 
 
 {$define USE_EEPROM_LM358DIFF}
-{.$define Write_OPAMP_DIFF}
+{$define Write_OPAMP_DIFF}
 
 const
    { 4MHz }
