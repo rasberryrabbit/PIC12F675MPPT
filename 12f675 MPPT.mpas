@@ -22,7 +22,7 @@ program _12f675_MPPT;
 
 
 {$define USE_EEPROM_LM358DIFF}
-{.$define USE_LM358_AUTOCAL}
+{.$define Write_OPAMP_DIFF}
 
 const
    { 4MHz }
@@ -52,6 +52,7 @@ var
    flag_inc, got_max :boolean;
    Inc_pwm, eq_cnt : byte;
    vol1, vol2 : byte;
+   Write_OPAMP : sbit at GP3_bit;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -97,7 +98,16 @@ begin
      TMR0IE_bit:=1;
      
      LM358_diff:=cLM358_diff;
+     {$ifdef Write_OPAMP_DIFF}
+     if Write_OPAMP=0 then begin
+       Delay_100ms;
+       adc_cur:=ADC_Read(2);
+       EEPROM_Write(0, Lo(adc_cur));
+     end;
+     {$endif}
+     
      {$ifdef USE_EEPROM_LM358DIFF}
+     Delay_100ms;
      LM358_diff:=EEPROM_Read(0);
      {$endif}
 
@@ -115,11 +125,6 @@ begin
      GIE_bit:=1;                   // enable Interrupt
 
      TMR1ON_bit:=1;
-
-     {$ifdef USE_LM358_AUTOCAL}
-     Delay_ms(50);
-     LM358_diff:=Adc_Read(2);
-     {$endif}
 
      VOL_PWM:=PWM_LOW;
      flag_inc:=True;

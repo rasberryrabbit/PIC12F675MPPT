@@ -1,4 +1,5 @@
 main
+	Delay_100ms
 	EEPROM_Read
 	ADC_Read
 		Delay_22us
