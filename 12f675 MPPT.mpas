@@ -53,6 +53,7 @@ var
    Inc_pwm, eq_cnt : byte;
    vol1, vol2 : byte;
    Write_OPAMP : sbit at GP3_bit;
+   IncPWM_EQ : byte;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -110,6 +111,9 @@ begin
      Delay_100ms;
      LM358_diff:=EEPROM_Read(0);
      {$endif}
+     
+     IncPWM_EQ:=0;
+     IncPWM_EQ:=EEPROM_Read(3);
 
      T1CKPS0_bit:=1;               // timer prescaler 1:2
      TMR1CS_bit:=0;
@@ -175,11 +179,11 @@ begin
            }
            if adc_cur>adc_prev then begin
              flag_inc:=False;
-             Inc_pwm:=1;
+             Inc_pwm:=IncPWM_EQ;
            end else
            if adc_cur<adc_prev then begin
              flag_inc:=True;
-             Inc_pwm:=1;
+             Inc_pwm:=IncPWM_EQ;
            end else begin
              Inc_pwm:=0;
              LED1_tm:=240;
