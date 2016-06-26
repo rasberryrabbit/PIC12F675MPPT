@@ -5,4 +5,5 @@ main
 	EEPROM_Write
 	EEPROM_Read
 	Mul_32x32_U
+	Delay_80us
 Interrupt

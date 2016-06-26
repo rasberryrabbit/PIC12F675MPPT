@@ -36,7 +36,7 @@ const
      circuit v2 has more sensivity on current adc reading( x4 ),
      it may value 6 but 4. measuring on PIC pin 5 voltage while no loading  }
    cLM358_diff = 4;
-   Inc_Pwm_Max = 14;
+   Inc_Pwm_Max = 10;
    adc_max_loop = 1;
 
 var
@@ -46,7 +46,7 @@ var
    PWM_TICK, ON_PWM, VOL_PWM:byte;
    TICK_1000:Byte;
    LED1_tm:byte;
-   adc_vol, adc_cur, offset_cur, adc_prev, adc_diff : word;
+   adc_vol, adc_cur, offset_cur, adc_prev, adc_diff, pre_volt : word;
    power_prev, power_curr, power_diff : dword;
    i, LM358_diff:byte;
    flag_inc, got_max :boolean;
@@ -94,6 +94,7 @@ begin
      VCFG_bit:=1;
      CHS1_bit:=1;
      ADFM_bit:=1;
+     pre_volt:=0;
 
      OPTION_REG:=%01011111;        // ~4KHz @ 4MHz
      TMR0IE_bit:=1;
@@ -170,9 +171,9 @@ begin
          else
            adc_cur:=0;
        //
-       if adc_cur>0 then begin
+       if (adc_cur>0) then begin
          power_curr:= adc_cur * adc_vol;
-         if power_curr=power_prev then begin
+         if (vol1<>0) and (power_curr=power_prev) then begin
            {
            if Inc_pwm>1 then
              Dec(Inc_pwm);
@@ -189,6 +190,7 @@ begin
              LED1_tm:=240;
              flag_inc:=not flag_inc;
            end;
+           vol2:=0;
          end else begin
            if Inc_pwm<Inc_Pwm_Max then
              Inc(Inc_pwm);
@@ -207,8 +209,7 @@ begin
                vol2:=0;
                continue;
              end;
-           end else
-             vol2:=0;
+           end;
          end;
        end else begin
          // no load or low current
@@ -229,5 +230,7 @@ begin
          end else
              VOL_PWM:=PWM_LOW;
        end;
+       if adc_cur=0 then
+         Delay_80us;
      end;
 end.
