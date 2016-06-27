@@ -209,6 +209,7 @@ begin
                Inc_pwm:=0;
                VOL_PWM:=(vol1+vol2) div 2;
                vol2:=0;
+               lo_PWM:=VOL_PWM-(VOL_PWM div 4);
                continue;
              end;
            end;
