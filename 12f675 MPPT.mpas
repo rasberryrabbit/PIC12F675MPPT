@@ -36,7 +36,7 @@ const
      circuit v2 has more sensivity on current adc reading( x4 ),
      it may value 6 but 4. measuring on PIC pin 5 voltage while no loading  }
    cLM358_diff = 4;
-   Inc_Pwm_Max = 10;
+   Inc_Pwm_Max = 11;
    adc_max_loop = 1;
 
 var
@@ -51,9 +51,10 @@ var
    i, LM358_diff:byte;
    flag_inc, got_max :boolean;
    Inc_pwm, eq_cnt : byte;
-   vol1, vol2, lo_PWM : byte;
+   vol1, vol2, lo_PWM, hi_PWM : byte;
    Write_OPAMP : sbit at GP3_bit;
    IncPWM_EQ : byte;
+   wPWM : word;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -132,6 +133,7 @@ begin
 
      VOL_PWM:=PWM_LOW;
      lo_PWM:=PWM_LOW;
+     hi_PWM:=PWM_MAX;
      flag_inc:=True;
      adc_prev:=0;
 
@@ -207,9 +209,17 @@ begin
              { (4) set average PWM }
              if (vol1<>0) and (vol2<>0) then begin
                Inc_pwm:=0;
-               VOL_PWM:=(vol1+vol2) div 2;
+               wPWM:=vol1;
+               wPWM:=(wPWM+vol2) div 2;
+               VOL_PWM:=lo(wPWM);
                vol2:=0;
-               lo_PWM:=VOL_PWM-(VOL_PWM div 4);
+               //
+               wPWM:=VOL_PWM;
+               wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 8;
+               hi_PWM:=lo(wPWM);
+               //
+               wPWM:=VOL_PWM-(VOL_PWM div 14);
+               lo_PWM:=lo(wPWM);
                continue;
              end;
            end;
@@ -221,13 +231,14 @@ begin
          flag_inc:=True;
          vol2:=0;
          lo_PWM:=0;
+         hi_PWM:=PWM_MAX;
        end;
        // PWM
        if flag_inc then begin
-         if VOL_PWM<(PWM_MAX-Inc_pwm) then begin
+         if VOL_PWM<(hi_PWM-Inc_pwm) then begin
            VOL_PWM:=VOL_PWM+Inc_pwm;
          end else
-             VOL_PWM:=PWM_MAX;
+             VOL_PWM:=hi_PWM;
        end else begin
          if VOL_PWM>(lo_PWM+(Inc_Pwm_Max+1-Inc_pwm)) then begin
            VOL_PWM:=VOL_PWM-(Inc_Pwm_Max+1-Inc_pwm);
