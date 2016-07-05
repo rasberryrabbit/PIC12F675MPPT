@@ -22,6 +22,7 @@ program _12f675_MPPT;
 
 
 {$define USE_EEPROM_LM358DIFF}
+{.$define USE_RESET_TIMER}
 {$define Write_OPAMP_DIFF}
 
 const
@@ -30,7 +31,9 @@ const
    PWM_LOW = 1;
 
    TMR1L_LOAD=$17;
-   TMR1H_LOAD=$FC;
+   TMR1H_LOAD=$FC;           // 2ms
+   
+   Reset_Tick_Start = 1500;  // 5 minutes
    
    { circuit modified, 9.6mV / 3600mV * 1024 + 1, eeprom offset 0 => 04
      circuit v2 has more sensivity on current adc reading( x4 ),
@@ -55,6 +58,8 @@ var
    Write_OPAMP : sbit at GP3_bit;
    IncPWM_EQ : byte;
    wPWM : word;
+   Reset_Tick100 : Byte;
+   Reset_Tick : word;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -126,6 +131,8 @@ begin
      power_curr:=0;
      vol1:=0;
      vol2:=0;
+     Reset_Tick100:=100;
+     Reset_Tick:=Reset_Tick_Start;
 
      GIE_bit:=1;                   // enable Interrupt
 
@@ -148,6 +155,28 @@ begin
            LED1:=not LED1;
            TICK_1000:=0;
          end;
+         {$ifdef USE_RESET_TIMER}
+         // reset tick
+         if Reset_Tick100<>0 then begin
+           Dec(Reset_Tick100);
+         end else begin
+           Reset_Tick100:=100;
+           if Reset_Tick<>0 then begin
+             Dec(Reset_Tick);
+           end else begin
+             Reset_Tick:=Reset_Tick_Start;
+             VOL_PWM:=PWM_LOW;
+             power_curr:=0;
+             Inc_pwm:=Inc_Pwm_Max;
+             flag_inc:=True;
+             vol2:=0;
+             lo_PWM:=0;
+             hi_PWM:=PWM_MAX;
+             Delay_1ms;
+             continue;
+           end;
+         end;
+         {$endif}
        end;
        if (VOL_PWM>=(PWM_MAX-1)) then
          LED1_tm:=64
