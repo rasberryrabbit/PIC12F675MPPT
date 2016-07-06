@@ -516,28 +516,19 @@ L__main77:
 ;12f675 MPPT.mpas,246 :: 		wPWM:=VOL_PWM;
 	MOVLW      0
 	MOVWF      _wPWM+1
-;12f675 MPPT.mpas,247 :: 		wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 8;
+;12f675 MPPT.mpas,247 :: 		wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 3; // 8
 	MOVF       _VOL_PWM+0, 0
 	SUBLW      255
-	MOVWF      R3+0
+	MOVWF      R0+0
 	MOVLW      0
 	BTFSS      STATUS+0, 0
 	ADDLW      1
-	CLRF       R3+1
-	SUBWF      R3+1, 1
-	MOVF       R3+0, 0
-	MOVWF      R0+0
-	MOVF       R3+1, 0
-	MOVWF      R0+1
-	RRF        R0+1, 1
-	RRF        R0+0, 1
-	BCF        R0+1, 7
-	RRF        R0+1, 1
-	RRF        R0+0, 1
-	BCF        R0+1, 7
-	RRF        R0+1, 1
-	RRF        R0+0, 1
-	BCF        R0+1, 7
+	CLRF       R0+1
+	SUBWF      R0+1, 1
+	MOVLW      3
+	MOVWF      R4+0
+	CLRF       R4+1
+	CALL       _Div_16x16_U+0
 	MOVF       R0+0, 0
 	ADDWF      _wPWM+0, 1
 	MOVF       R0+1, 0
@@ -547,8 +538,8 @@ L__main77:
 ;12f675 MPPT.mpas,248 :: 		hi_PWM:=lo(wPWM);
 	MOVF       _wPWM+0, 0
 	MOVWF      _hi_PWM+0
-;12f675 MPPT.mpas,250 :: 		wPWM:=VOL_PWM-(VOL_PWM div 14);
-	MOVLW      14
+;12f675 MPPT.mpas,250 :: 		wPWM:=VOL_PWM-(VOL_PWM div 15);     // 14
+	MOVLW      15
 	MOVWF      R4+0
 	CLRF       R4+1
 	MOVF       _VOL_PWM+0, 0
