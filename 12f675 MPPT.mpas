@@ -244,7 +244,7 @@ begin
                vol2:=0;
                //
                wPWM:=VOL_PWM;
-               wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 3; // 8
+               wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 5; // 8
                hi_PWM:=lo(wPWM);
                //
                wPWM:=VOL_PWM-(VOL_PWM div 15);     // 14
