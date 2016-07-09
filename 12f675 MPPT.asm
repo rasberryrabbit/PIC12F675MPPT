@@ -512,12 +512,13 @@ L__main80:
 	MOVF       _wPWM+0, 0
 	MOVWF      _VOL_PWM+0
 ;12f675 MPPT.mpas,245 :: 		if VOL_PWM<PWM_MAX-Corr_Vol then
-	MOVLW      254
+	MOVLW      253
 	SUBWF      _wPWM+0, 0
 	BTFSC      STATUS+0, 0
 	GOTO       L__main61
 ;12f675 MPPT.mpas,246 :: 		VOL_PWM:=VOL_PWM+Corr_Vol
-	INCF       _VOL_PWM+0, 1
+	MOVLW      2
+	ADDWF      _VOL_PWM+0, 1
 	GOTO       L__main62
 ;12f675 MPPT.mpas,247 :: 		else
 L__main61:
@@ -531,7 +532,7 @@ L__main62:
 	MOVF       _VOL_PWM+0, 0
 	MOVWF      _wPWM+0
 	CLRF       _wPWM+1
-;12f675 MPPT.mpas,252 :: 		wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 6; // 8
+;12f675 MPPT.mpas,252 :: 		wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 9; // 8
 	MOVF       _VOL_PWM+0, 0
 	SUBLW      255
 	MOVWF      R0+0
@@ -540,7 +541,7 @@ L__main62:
 	ADDLW      1
 	CLRF       R0+1
 	SUBWF      R0+1, 1
-	MOVLW      6
+	MOVLW      9
 	MOVWF      R4+0
 	CLRF       R4+1
 	CALL       _Div_16x16_U+0

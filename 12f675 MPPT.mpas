@@ -34,7 +34,7 @@ const
    TMR1H_LOAD=$FC;           // 2ms
    
    Reset_Tick_Start = 1500;  // 5 minutes
-   Corr_Vol = 1;
+   Corr_Vol = 2;
    
    { circuit modified, 9.6mV / 3600mV * 1024 + 1, eeprom offset 0 => 04
      circuit v2 has more sensivity on current adc reading( x4 ),
@@ -58,7 +58,7 @@ var
    vol1, vol2, lo_PWM, hi_PWM : byte;
    Write_OPAMP : sbit at GP3_bit;
    IncPWM_EQ : byte;
-   wPWM : word;
+   wPWM, wTemp : word;
    Reset_Tick100 : Byte;
    Reset_Tick : word;
 
@@ -249,7 +249,7 @@ begin
                vol2:=0;
                //
                wPWM:=VOL_PWM;
-               wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 6; // 8
+               wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 9; // 8
                hi_PWM:=lo(wPWM);
                //
                wPWM:=VOL_PWM-(VOL_PWM div 15);     // 14
