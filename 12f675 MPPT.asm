@@ -531,7 +531,7 @@ L__main62:
 	MOVF       _VOL_PWM+0, 0
 	MOVWF      _wPWM+0
 	CLRF       _wPWM+1
-;12f675 MPPT.mpas,252 :: 		wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 7; // 8
+;12f675 MPPT.mpas,252 :: 		wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 6; // 8
 	MOVF       _VOL_PWM+0, 0
 	SUBLW      255
 	MOVWF      R0+0
@@ -540,7 +540,7 @@ L__main62:
 	ADDLW      1
 	CLRF       R0+1
 	SUBWF      R0+1, 1
-	MOVLW      7
+	MOVLW      6
 	MOVWF      R4+0
 	CLRF       R4+1
 	CALL       _Div_16x16_U+0
