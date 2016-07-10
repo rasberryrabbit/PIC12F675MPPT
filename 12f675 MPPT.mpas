@@ -34,7 +34,7 @@ const
    TMR1H_LOAD=$FC;           // 2ms
    
    Reset_Tick_Start = 1500;  // 5 minutes
-   Corr_Vol = 2;
+   Corr_Vol = 1;
    
    { circuit modified, 9.6mV / 3600mV * 1024 + 1, eeprom offset 0 => 04
      circuit v2 has more sensivity on current adc reading( x4 ),
@@ -240,12 +240,17 @@ begin
              if (vol1<>0) and (vol2<>0) then begin
                Inc_pwm:=0;
                wPWM:=vol1;
-               wPWM:=(wPWM+vol2) div 2;
+               wPWM:=wPWM+vol2;
+               if lo(wPWM) and 1<>0 then
+                wPWM:=wPWM+1;
+               wPWM:=wPWM div 2;
                VOL_PWM:=lo(wPWM);
+               {
                if VOL_PWM<PWM_MAX-Corr_Vol then
                  VOL_PWM:=VOL_PWM+Corr_Vol
                  else
                    VOL_PWM:=PWM_MAX;
+               }
                vol2:=0;
                //
                wPWM:=VOL_PWM;
