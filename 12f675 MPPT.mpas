@@ -24,23 +24,23 @@ program _12f675_MPPT;
 {$define USE_EEPROM_LM358DIFF}
 {.$define USE_RESET_TIMER}
 {$define Write_OPAMP_DIFF}
-
 const
    { 4MHz }
    PWM_MAX = 255;            // 75
    PWM_LOW = 1;
+   PWMHI_DIV = 6;            // 8
+   PWMLO_DIV = 15;           // 14
 
    TMR1L_LOAD=$17;
    TMR1H_LOAD=$FC;           // 2ms
    
    Reset_Tick_Start = 1500;  // 5 minutes
-   Corr_Vol = 1;
-   
+
    { circuit modified, 9.6mV / 3600mV * 1024 + 1, eeprom offset 0 => 04
      circuit v2 has more sensivity on current adc reading( x4 ),
      it may value 6 but 4. measuring on PIC pin 5 voltage while no loading  }
    cLM358_diff = 4;
-   Inc_Pwm_Max = 11;
+   Inc_Pwm_Max = (PWMLO_DIV+1) shr 1;          //11;
    adc_max_loop = 1;
 
 var
@@ -240,10 +240,8 @@ begin
              if (vol1<>0) and (vol2<>0) then begin
                Inc_pwm:=0;
                wPWM:=vol1;
-               wPWM:=wPWM+vol2;
-               if lo(wPWM) and 1<>0 then
-                wPWM:=wPWM+1;
-               wPWM:=wPWM div 2;
+               wPWM:=wPWM+vol2+1;
+               wPWM:=wPWM shr 1;
                VOL_PWM:=lo(wPWM);
                {
                if VOL_PWM<PWM_MAX-Corr_Vol then
@@ -253,15 +251,22 @@ begin
                }
                vol2:=0;
                //
-               wPWM:=VOL_PWM;
-               wPWM:=wPWM+(PWM_MAX-VOL_PWM) div 6; // 8
+               wPWM:=PWM_MAX;
+               wPWM:=wPWM-VOL_PWM+((PWMHI_DIV+1) shr 1);
+               wPWM:=wPWM div PWMHI_DIV;
+               wPWM:=wPWM+VOL_PWM;
                hi_PWM:=lo(wPWM);
                //
-               wPWM:=VOL_PWM-(VOL_PWM div 15);     // 14
+               wPWM:=VOL_PWM-PWM_LOW+((PWMLO_DIV+1) shr 1);
+               wPWM:=wPWM div PWMLO_DIV;
+               wPWM:=VOL_PWM-wPWM;
                lo_PWM:=lo(wPWM);
                continue;
-             end;
-           end;
+             end 
+             else if Inc_pwm<Inc_Pwm_Max then
+               Inc(Inc_pwm);
+           end else if (not flag_inc) and Inc_pwm>((Inc_Pwm_Max+1) shr 1) then
+             Dec(Inc_pwm);
          end;
        end else begin
          // no load or low current
