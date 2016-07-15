@@ -265,8 +265,16 @@ begin
              end 
              else if Inc_pwm<Inc_Pwm_Max then
                Inc(Inc_pwm);
-           end else if (not flag_inc) and Inc_pwm>((Inc_Pwm_Max+1) shr 1) then
-             Dec(Inc_pwm);
+           end else 
+           begin
+             if not flag_inc then begin
+               if Inc_pwm>3 then
+                 Dec(Inc_pwm);
+             end else begin
+               if Inc_pwm<Inc_Pwm_Max then
+                 Inc(Inc_pwm);
+             end;
+           end;
          end;
        end else begin
          // no load or low current
