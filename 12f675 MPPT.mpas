@@ -240,26 +240,17 @@ begin
              if (vol1<>0) and (vol2<>0) then begin
                Inc_pwm:=0;
                wPWM:=vol1;
-               wPWM:=wPWM+vol2+1;
-               wPWM:=wPWM shr 1;
+               wPWM:=(wPWM+vol2+1) div 2;
                VOL_PWM:=lo(wPWM);
-               {
-               if VOL_PWM<PWM_MAX-Corr_Vol then
-                 VOL_PWM:=VOL_PWM+Corr_Vol
-                 else
-                   VOL_PWM:=PWM_MAX;
-               }
+               
                vol2:=0;
                //
-               wPWM:=PWM_MAX;
-               wPWM:=wPWM-VOL_PWM+((PWMHI_DIV+1) shr 1);
-               wPWM:=wPWM div PWMHI_DIV;
-               wPWM:=wPWM+VOL_PWM;
+               wPWM:=PWM_MAX-VOL_PWM+((PWMHI_DIV+1) div 2);
+               wPWM:=VOL_PWM+(wPWM div PWMHI_DIV);
                hi_PWM:=lo(wPWM);
                //
-               wPWM:=VOL_PWM-PWM_LOW+((PWMLO_DIV+1) shr 1);
-               wPWM:=wPWM div PWMLO_DIV;
-               wPWM:=VOL_PWM-wPWM;
+               wPWM:=VOL_PWM-PWM_LOW+((PWMLO_DIV+1) div 2);
+               wPWM:=VOL_PWM-(wPWM div PWMLO_DIV);
                lo_PWM:=lo(wPWM);
                continue;
              end 
