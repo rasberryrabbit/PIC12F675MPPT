@@ -226,9 +226,10 @@ begin
            end;
            vol2:=0;
          end else begin
-           if Inc_pwm<Inc_Pwm_Max then
-             Inc(Inc_pwm);
            if power_curr<power_prev then begin
+             if Inc_pwm<Inc_Pwm_Max then
+               Inc(Inc_pwm);
+
              { (1) ---> lowpower1 PWM
                (2) reverse direction
                (3) equal power PWM ---> low power2 PWM
@@ -253,18 +254,18 @@ begin
                wPWM:=VOL_PWM-(wPWM div PWMLO_DIV);
                lo_PWM:=lo(wPWM);
                continue;
-             end 
-             {else if Inc_pwm<Inc_Pwm_Max then
-               Inc(Inc_pwm)};
+             end;
            end else 
            begin
-             {if not flag_inc then begin
-               if Inc_pwm>(Inc_Pwm_Max div 2+Inc_Pwm_Max div 4+1) then
-                 Dec(Inc_pwm);
-             end else begin
+             if vol2=0 then begin
                if Inc_pwm<Inc_Pwm_Max then
                  Inc(Inc_pwm);
-             end;}
+             end else begin
+               if Inc_pwm<(Inc_Pwm_Max div 2+Inc_Pwm_Max div 4+1) then
+                 Inc(Inc_pwm)
+                 else
+                   Dec(Inc_pwm);
+             end;
            end;
          end;
        end else begin
