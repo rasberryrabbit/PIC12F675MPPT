@@ -40,7 +40,7 @@ const
      circuit v2 has more sensivity on current adc reading( x4 ),
      it may value 6 but 4. measuring on PIC pin 5 voltage while no loading  }
    cLM358_diff = 4;
-   Inc_Pwm_Max = (PWMLO_DIV+1) shr 1;          //11;
+   Inc_Pwm_Max = 11;          //11;
    adc_max_loop = 1;
 
 var
@@ -254,17 +254,17 @@ begin
                lo_PWM:=lo(wPWM);
                continue;
              end 
-             else if Inc_pwm<Inc_Pwm_Max then
-               Inc(Inc_pwm);
+             {else if Inc_pwm<Inc_Pwm_Max then
+               Inc(Inc_pwm)};
            end else 
            begin
-             if not flag_inc then begin
-               if Inc_pwm>3 then
+             {if not flag_inc then begin
+               if Inc_pwm>(Inc_Pwm_Max div 2+Inc_Pwm_Max div 4+1) then
                  Dec(Inc_pwm);
              end else begin
                if Inc_pwm<Inc_Pwm_Max then
                  Inc(Inc_pwm);
-             end;
+             end;}
            end;
          end;
        end else begin
