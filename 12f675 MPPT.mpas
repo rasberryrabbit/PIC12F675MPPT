@@ -207,7 +207,7 @@ begin
          if lo_PWM=0 then
            lo_PWM:=VOL_PWM;
          power_curr:= adc_cur * adc_vol;
-         if (vol1<>0) and (power_curr=power_prev) then begin
+         if power_curr=power_prev then begin
            Inc_pwm:=0;
            if adc_cur>adc_prev then begin
              flag_inc:=False;
@@ -224,18 +224,14 @@ begin
            if Inc_pwm<Inc_Pwm_Max then
              Inc(Inc_pwm);
            if power_curr<power_prev then begin
-             { (1) ---> lowpower1 PWM
-               (2) reverse direction
-               (3) equal power PWM ---> low power2 PWM
-             }
-             vol1:=vol2;
-             vol2:=VOL_PWM;
+             { vol1 = last low PWM }
+             vol1:=VOL_PWM;
              flag_inc:=not flag_inc;
-             { (4) set average PWM }
-             if (vol1<>0) and (vol2<>0) then begin
+             { if set last low and high PWM, make average }
+             if vol2<>0 then begin
                Inc_pwm:=0;
                wPWM:=vol1;
-               wPWM:=(wPWM+vol2+1) div 2;
+               wPWM:=(wPWM+vol2+1) div 2+1;
                VOL_PWM:=lo(wPWM);
                
                vol2:=0;
@@ -249,6 +245,9 @@ begin
                lo_PWM:=lo(wPWM);
                continue;
              end;
+           end else begin
+             { last high PWM }
+             vol2:=VOL_PWM;
            end;
          end;
        end else begin
