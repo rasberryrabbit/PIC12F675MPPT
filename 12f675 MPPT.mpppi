@@ -35,9 +35,9 @@ Count=0
 Count=0
 [SEARCH_PATH]
 Count=3
-Path0=E:\mikroPascal PRO for PIC\Defs\
-Path1=E:\mikroPascal PRO for PIC\Uses\P16\
-Path2=E:\mikroPascal PRO for PIC\works\12f675MPPT\
+Path0=F:\mikroPascal PRO for PIC\Defs\
+Path1=F:\mikroPascal PRO for PIC\Uses\P16\
+Path2=F:\mikroPascal PRO for PIC\works\12f675MPPT\
 [HEADER_PATH]
 Count=0
 [HEADERS]
@@ -67,4 +67,6 @@ File17=Time
 File18=Trigon
 File19=Trigonometry
 [EXPANDED_NODES]
-Count=0
+Node0=Sources
+Node1=Output Files
+Count=2
