@@ -111,6 +111,8 @@ begin
      {$ifdef Write_OPAMP_DIFF}
      if Write_OPAMP=0 then begin
        Delay_100ms;
+       Delay_100ms;
+       Delay_100ms;
        adc_cur:=ADC_Read(2);
        EEPROM_Write(0, Lo(adc_cur));
      end;
@@ -200,8 +202,8 @@ begin
        adc_vol:=adc_vol div adc_max_loop;
        adc_cur:=adc_cur div adc_max_loop;
        // sub op-amp offset value
-       if adc_cur>LM358_diff then
-         adc_cur:=adc_cur-LM358_diff
+       if adc_cur>word(LM358_diff) then
+         adc_cur:=adc_cur-word(LM358_diff)
          else
            adc_cur:=0;
        //
