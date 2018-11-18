@@ -121,7 +121,7 @@ begin
      LM358_diff:=EEPROM_Read(0);
      {$endif}
 
-     T1CKPS1_bit:=1;               // timer prescaler 1:4
+     T1CKPS0_bit:=1;               // timer1 prescaler 1:2
      TMR1CS_bit:=0;
      TMR1L:=TMR1L_LOAD;
      TMR1H:=TMR1H_LOAD;

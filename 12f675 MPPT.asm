@@ -157,8 +157,8 @@ L__main10:
 	CALL       _EEPROM_Read+0
 	MOVF       R0+0, 0
 	MOVWF      _LM358_diff+0
-;12f675 MPPT.mpas,124 :: 		T1CKPS1_bit:=1;               // timer prescaler 1:4
-	BSF        T1CKPS1_bit+0, BitPos(T1CKPS1_bit+0)
+;12f675 MPPT.mpas,124 :: 		T1CKPS0_bit:=1;               // timer1 prescaler 1:2
+	BSF        T1CKPS0_bit+0, BitPos(T1CKPS0_bit+0)
 ;12f675 MPPT.mpas,125 :: 		TMR1CS_bit:=0;
 	BCF        TMR1CS_bit+0, BitPos(TMR1CS_bit+0)
 ;12f675 MPPT.mpas,126 :: 		TMR1L:=TMR1L_LOAD;
