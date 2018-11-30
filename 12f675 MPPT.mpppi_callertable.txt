@@ -1,5 +1,4 @@
 main
-	Delay_10ms
 	Delay_100ms
 	ADC_Read
 		Delay_22us
