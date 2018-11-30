@@ -6,8 +6,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Simple MPPT with 12F675 v4"
-Date "2016-03-19"
-Rev "1.4"
+Date "2018-11-30"
+Rev "1.5"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -316,17 +316,6 @@ Text Label 4200 4400 2    60   ~ 0
 PV-Voltage
 Text Notes 8900 5200 2    60   ~ 0
 Heat Sink
-$Comp
-L Device:R R11
-U 1 1 55C4C21C
-P 6400 3600
-F 0 "R11" V 6480 3600 50  0000 C CNN
-F 1 "100k" V 6400 3600 50  0000 C CNN
-F 2 "" V 6330 3600 30  0000 C CNN
-F 3 "" H 6400 3600 30  0000 C CNN
-	1    6400 3600
-	0    1    1    0   
-$EndComp
 $Comp
 L Device:R R12
 U 1 1 55C48C57
@@ -680,8 +669,6 @@ Wire Wire Line
 Wire Wire Line
 	8850 3850 8850 3600
 Wire Wire Line
-	6550 3600 8850 3600
-Wire Wire Line
 	9450 4450 9450 4850
 Connection ~ 8400 5600
 Wire Wire Line
@@ -837,8 +824,6 @@ Wire Wire Line
 Wire Wire Line
 	6100 5600 5850 5600
 Wire Wire Line
-	6100 3600 6250 3600
-Wire Wire Line
 	5200 5600 4900 5600
 Wire Wire Line
 	5200 4400 5400 4400
@@ -862,4 +847,6 @@ Wire Wire Line
 	4150 4650 3400 4650
 Wire Wire Line
 	2650 4650 2650 5600
+Wire Wire Line
+	6100 3600 8850 3600
 $EndSCHEMATC
