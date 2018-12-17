@@ -25,7 +25,7 @@ program _12f675_MPPT;
 {$define Write_OPAMP_DIFF}
 
 const
-   PWM_MAX = 230;
+   PWM_MAX = 250;
    PWM_MIN = 1;
    PWM_MID = (PWM_MAX+PWM_MIN) div 2-5;
 
@@ -33,11 +33,11 @@ const
    TMR1H_LOAD=$F8;           // 2ms, 65536 - 2000
 
    VOLMUL = 25 div 6;        // 25V(1024) : 6A(1024), don't exceed 8
-   _UPDATE_INT = 20 div 2;   // consider 90ms
+   _UPDATE_INT = 30 div 2;   // consider 90ms
    _PWM_CHECK = 4500 div 2;
 
    cLM358_diff = 0;
-   adc_max_loop = 6;     // 8
+   adc_max_loop = 10;     // 8
 
 label
    CONTLOOP;
@@ -171,20 +171,22 @@ begin
          LED1 := not LED1;
        end;
 
-       // Read Sync with PWM clock
-       doADCRead:=0;
        // save previous adc values
        vol_prev2:=vol_prev1;
        vol_prev1:=adc_vol;
+       // Read Sync with PWM clock
+       doADCRead:=0;
        while doADCRead=0 do ;
        // adc read
-       adc_vol:=ADC_Read(3);
        adc_cur:=ADC_Read(2);
+       adc_vol:=ADC_Read(3);
        for i:=0 to adc_max_loop-2 do begin
-         wtmp:=ADC_Read(3);
          xtmp:=ADC_Read(2);
+         wtmp:=ADC_Read(3);
          adc_vol:=(adc_vol+wtmp) div 2;
-         adc_cur:=(adc_cur+xtmp) div 2;
+         if xtmp > adc_cur then
+           adc_cur:=xtmp;
+         //adc_cur:=(adc_cur+xtmp) div 2;
        end;
        adc_vol:=adc_vol * VOLMUL;
 
@@ -196,7 +198,7 @@ begin
        powertime:=wtmp;
 
        power_prev:= power_curr;
-       power_curr:= adc_vol * adc_cur;
+       power_curr:= dword(adc_vol * adc_cur);
 
        // prevent low voltage condition
        wtmp:=TICK_1000;
