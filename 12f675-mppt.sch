@@ -6,8 +6,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Simple MPPT with 12F675 v4"
-Date "2018-11-30"
-Rev "1.5"
+Date "2018-12-17"
+Rev "1.6"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -397,17 +397,6 @@ F 3 "" H 6100 4900 60  0000 C CNN
 	1    6100 4900
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:CP C6
-U 1 1 55D02AF9
-P 5200 5150
-F 0 "C6" H 5100 5400 50  0000 L CNN
-F 1 "10u" H 5000 5300 50  0000 L CNN
-F 2 "" H 5238 5000 30  0000 C CNN
-F 3 "" H 5200 5150 60  0000 C CNN
-	1    5200 5150
-	1    0    0    -1  
-$EndComp
 Text Label 8550 6000 0    60   ~ 0
 3.6v
 $Comp
@@ -627,21 +616,13 @@ Wire Wire Line
 Wire Wire Line
 	4900 4300 4900 4750
 Wire Wire Line
-	5200 5300 5200 5600
-Connection ~ 5200 5600
-Wire Wire Line
 	2100 3500 2100 4400
 Wire Wire Line
 	2100 4400 4400 4400
 Wire Wire Line
-	4700 4400 5200 4400
-Wire Wire Line
 	5400 4400 5400 3800
 Wire Wire Line
 	5400 3800 5250 3800
-Wire Wire Line
-	5200 5000 5200 4400
-Connection ~ 5200 4400
 Wire Wire Line
 	5650 4500 5500 4500
 Wire Wire Line
@@ -820,13 +801,7 @@ Wire Wire Line
 Wire Wire Line
 	8400 3950 8400 5200
 Wire Wire Line
-	5650 5600 5200 5600
-Wire Wire Line
 	6100 5600 5850 5600
-Wire Wire Line
-	5200 5600 4900 5600
-Wire Wire Line
-	5200 4400 5400 4400
 Wire Wire Line
 	5650 4500 5650 4650
 Wire Wire Line
@@ -849,4 +824,8 @@ Wire Wire Line
 	2650 4650 2650 5600
 Wire Wire Line
 	6100 3600 8850 3600
+Wire Wire Line
+	4700 4400 5400 4400
+Wire Wire Line
+	4900 5600 5650 5600
 $EndSCHEMATC
