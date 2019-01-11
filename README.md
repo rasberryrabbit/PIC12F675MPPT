@@ -3,6 +3,7 @@ Solar MPPT circuit.
 
 This is simple MPPT for solar panel.
 New 3.2 firmware from 16F676 project.
+It's 50W limit design. Consider D6,D1,D2,L1 with more high power solar panel.
 
 11 mili-ohm N-ch logic level FET(BUK9511 or BUK9508) used for current sensor. 
 It can replace by 11 mili-ohm or higher Rds-on resistance logic level FET.
