@@ -2,13 +2,13 @@
 Solar MPPT circuit.
 
 This is simple MPPT for solar panel.
-Firmware v1~v5 is tested. Last firmware v5 working good in my usage.
+New 3.2 firmware from 16F676 project.
 
-11 mili-ohm N-ch logic level FET(BUK9511) used for current sensor. 
+11 mili-ohm N-ch logic level FET(BUK9511 or BUK9508) used for current sensor. 
 It can replace by 11 mili-ohm or higher Rds-on resistance logic level FET.
 
-Transistor 2N2222A -> BC547 or compatible
-Transistor 2N2907A -> BC557 or compatible
+Transistor 2N2222A -> BC547 or compatible(reverse pin order)
+Transistor 2N2907A -> BC557 or compatible(reverse pin order)
 
 L1 100~330uH
 
