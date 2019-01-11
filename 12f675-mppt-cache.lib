@@ -1,11 +1,11 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
-# 12f675-mppt-rescue:7805
+# 12f675-mppt-rescue_7805
 #
-DEF 12f675-mppt-rescue:7805 U 0 30 N Y 1 F N
+DEF 12f675-mppt-rescue_7805 U 0 30 N Y 1 F N
 F0 "U" 150 -196 50 H V C CNN
-F1 "12f675-mppt-rescue:7805" 0 200 50 H V C CNN
+F1 "12f675-mppt-rescue_7805" 0 200 50 H V C CNN
 F2 "" 0 0 50 H V C CNN
 F3 "" 0 0 50 H V C CNN
 DRAW
@@ -16,11 +16,11 @@ X VO VO 400 50 200 L 40 40 1 1 w
 ENDDRAW
 ENDDEF
 #
-# 12f675-mppt-rescue:INDUCTOR
+# 12f675-mppt-rescue_INDUCTOR
 #
-DEF 12f675-mppt-rescue:INDUCTOR L 0 40 N N 1 F N
+DEF 12f675-mppt-rescue_INDUCTOR L 0 40 N N 1 F N
 F0 "L" -50 0 50 V V C CNN
-F1 "12f675-mppt-rescue:INDUCTOR" 100 0 50 V V C CNN
+F1 "12f675-mppt-rescue_INDUCTOR" 100 0 50 V V C CNN
 F2 "" 0 0 50 H V C CNN
 F3 "" 0 0 50 H V C CNN
 DRAW
@@ -33,11 +33,11 @@ X 2 2 0 -300 100 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# 12f675-mppt-rescue:LED
+# 12f675-mppt-rescue_LED
 #
-DEF 12f675-mppt-rescue:LED D 0 40 Y N 1 F N
+DEF 12f675-mppt-rescue_LED D 0 40 Y N 1 F N
 F0 "D" 0 100 50 H V C CNN
-F1 "12f675-mppt-rescue:LED" 0 -100 50 H V C CNN
+F1 "12f675-mppt-rescue_LED" 0 -100 50 H V C CNN
 F2 "" 0 0 50 H V C CNN
 F3 "" 0 0 50 H V C CNN
 $FPLIST
@@ -59,11 +59,11 @@ X A 2 200 0 150 L 40 40 1 1 P
 ENDDRAW
 ENDDEF
 #
-# 12f675-mppt-rescue:LM358N-RESCUE-12f675-mppt
+# 12f675-mppt-rescue_LM358N-RESCUE-12f675-mppt
 #
-DEF 12f675-mppt-rescue:LM358N-RESCUE-12f675-mppt U 0 20 Y Y 2 F N
+DEF 12f675-mppt-rescue_LM358N-RESCUE-12f675-mppt U 0 20 Y Y 2 F N
 F0 "U" -50 200 60 H V L CNN
-F1 "12f675-mppt-rescue:LM358N-RESCUE-12f675-mppt" -50 -250 60 H V L CNN
+F1 "12f675-mppt-rescue_LM358N-RESCUE-12f675-mppt" -50 -250 60 H V L CNN
 F2 "" 0 0 60 H V C CNN
 F3 "" 0 0 60 H V C CNN
 DRAW
@@ -79,11 +79,11 @@ X ~ 7 500 0 300 L 40 40 2 1 O
 ENDDRAW
 ENDDEF
 #
-# 12f675-mppt-rescue:PIC12F629-I_P
+# 12f675-mppt-rescue_PIC12F629-I_P
 #
-DEF 12f675-mppt-rescue:PIC12F629-I_P IC 0 40 Y Y 1 F N
+DEF 12f675-mppt-rescue_PIC12F629-I_P IC 0 40 Y Y 1 F N
 F0 "IC" -550 550 50 H V L CNN
-F1 "12f675-mppt-rescue:PIC12F629-I_P" -550 450 50 H V L CNN
+F1 "12f675-mppt-rescue_PIC12F629-I_P" -550 450 50 H V L CNN
 F2 "" 0 0 50 H V C CNN
 F3 "" 0 0 50 H V C CNN
 DRAW
@@ -99,11 +99,11 @@ X VSS 8 -700 -300 150 R 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# 12f675-mppt-rescue:SW_PUSH
+# 12f675-mppt-rescue_SW_PUSH
 #
-DEF 12f675-mppt-rescue:SW_PUSH SW 0 40 N N 1 F N
+DEF 12f675-mppt-rescue_SW_PUSH SW 0 40 N N 1 F N
 F0 "SW" 150 110 50 H V C CNN
-F1 "12f675-mppt-rescue:SW_PUSH" 0 -80 50 H V C CNN
+F1 "12f675-mppt-rescue_SW_PUSH" 0 -80 50 H V C CNN
 F2 "" 0 0 50 H V C CNN
 F3 "" 0 0 50 H V C CNN
 DRAW
@@ -114,11 +114,11 @@ X 2 2 300 0 200 L 50 50 0 1 P I
 ENDDRAW
 ENDDEF
 #
-# Device:C
+# Device_C
 #
-DEF Device:C C 0 10 N Y 1 F N
+DEF Device_C C 0 10 N Y 1 F N
 F0 "C" 25 100 50 H V L CNN
-F1 "Device:C" 25 -100 50 H V L CNN
+F1 "Device_C" 25 -100 50 H V L CNN
 F2 "" 38 -150 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -132,11 +132,11 @@ X ~ 2 0 -150 110 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:CP
+# Device_CP
 #
-DEF Device:CP C 0 10 N Y 1 F N
+DEF Device_CP C 0 10 N Y 1 F N
 F0 "C" 25 100 50 H V L CNN
-F1 "Device:CP" 25 -100 50 H V L CNN
+F1 "Device_CP" 25 -100 50 H V L CNN
 F2 "" 38 -150 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -155,11 +155,11 @@ X ~ 2 0 -150 110 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:D
+# Device_D
 #
-DEF Device:D D 0 40 N N 1 F N
+DEF Device_D D 0 40 N N 1 F N
 F0 "D" 0 100 50 H V C CNN
-F1 "Device:D" 0 -100 50 H V C CNN
+F1 "Device_D" 0 -100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -177,11 +177,11 @@ X A 2 150 0 100 L 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:D_Schottky
+# Device_D_Schottky
 #
-DEF Device:D_Schottky D 0 40 N N 1 F N
+DEF Device_D_Schottky D 0 40 N N 1 F N
 F0 "D" 0 100 50 H V C CNN
-F1 "Device:D_Schottky" 0 -100 50 H V C CNN
+F1 "Device_D_Schottky" 0 -100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -199,11 +199,11 @@ X A 2 150 0 100 L 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:Q_NMOS_GDS
+# Device_Q_NMOS_GDS
 #
-DEF Device:Q_NMOS_GDS Q 0 0 Y N 1 F N
+DEF Device_Q_NMOS_GDS Q 0 0 Y N 1 F N
 F0 "Q" 200 50 50 H V L CNN
-F1 "Device:Q_NMOS_GDS" 200 -50 50 H V L CNN
+F1 "Device_Q_NMOS_GDS" 200 -50 50 H V L CNN
 F2 "" 200 100 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -231,11 +231,11 @@ X S 3 100 -200 100 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:Q_NPN_EBC
+# Device_Q_NPN_EBC
 #
-DEF Device:Q_NPN_EBC Q 0 0 Y N 1 F N
+DEF Device_Q_NPN_EBC Q 0 0 Y N 1 F N
 F0 "Q" 200 50 50 H V L CNN
-F1 "Device:Q_NPN_EBC" 200 -50 50 H V L CNN
+F1 "Device_Q_NPN_EBC" 200 -50 50 H V L CNN
 F2 "" 200 100 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -250,11 +250,11 @@ X C 3 100 200 100 D 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:Q_PNP_EBC
+# Device_Q_PNP_EBC
 #
-DEF Device:Q_PNP_EBC Q 0 0 Y N 1 F N
+DEF Device_Q_PNP_EBC Q 0 0 Y N 1 F N
 F0 "Q" 200 50 50 H V L CNN
-F1 "Device:Q_PNP_EBC" 200 -50 50 H V L CNN
+F1 "Device_Q_PNP_EBC" 200 -50 50 H V L CNN
 F2 "" 200 100 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -269,11 +269,11 @@ X C 3 100 200 100 D 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# Device:R
+# Device_R
 #
-DEF Device:R R 0 0 N Y 1 F N
+DEF Device_R R 0 0 N Y 1 F N
 F0 "R" 80 0 50 V V C CNN
-F1 "Device:R" 0 0 50 V V C CNN
+F1 "Device_R" 0 0 50 V V C CNN
 F2 "" -70 0 50 V I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
