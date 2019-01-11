@@ -5,9 +5,9 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "Simple MPPT with 12F675 v4"
+Title "Simple MPPT with 12F675 v5"
 Date "2019-01-11"
-Rev "1.6a"
+Rev "1.6b"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -437,7 +437,7 @@ L Device:D D6
 U 1 1 56E7C16F
 P 3100 2200
 F 0 "D6" H 3100 2300 50  0000 C CNN
-F 1 "1N4007" H 3100 2100 50  0000 C CNN
+F 1 "1N5822A" H 3100 2100 50  0000 C CNN
 F 2 "" H 3100 2200 60  0000 C CNN
 F 3 "" H 3100 2200 60  0000 C CNN
 	1    3100 2200
