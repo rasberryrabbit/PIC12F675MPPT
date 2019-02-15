@@ -26,8 +26,8 @@ program _12f675_MPPT;
 
 const
    PWM_MAX = 250;
-   PWM_MIN = 1;
-   PWM_MID = (PWM_MAX+PWM_MIN) div 2-5;
+   PWM_MIN = 10;
+   PWM_MID = PWM_MAX div 2-5;
 
    TMR1L_LOAD=$30;
    TMR1H_LOAD=$F8;           // 2ms, 65536 - 2000
@@ -147,8 +147,8 @@ begin
 
      TMR1ON_bit:=1;
 
-     VOLPWM:=PWM_MID;
-     flag_inc:=False;
+     VOLPWM:=PWM_MIN;
+     flag_inc:=True;
      vol_prev1:=0;
 
      powertime:=0;
@@ -159,7 +159,7 @@ begin
      clrwdt;
      delay_ms(300);
      LED1:=1;
-     delay_ms(500);
+     delay_ms(300);
      LED1:=0;
      clrwdt;
 
@@ -227,8 +227,8 @@ begin
          }
        end else begin
          LED1_tm:=100;
-         VOLPWM:=PWM_MID;
-         flag_inc:=false;
+         VOLPWM:=PWM_MIN;
+         flag_inc:=True;
          power_curr:=0;
          adc_cur:=0;
          goto CONTLOOP;

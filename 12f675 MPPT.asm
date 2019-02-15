@@ -215,11 +215,12 @@ L__main17:
 	BSF        GIE_bit+0, BitPos(GIE_bit+0)
 ;12f675 MPPT.mpas,148 :: 		TMR1ON_bit:=1;
 	BSF        TMR1ON_bit+0, BitPos(TMR1ON_bit+0)
-;12f675 MPPT.mpas,150 :: 		VOLPWM:=PWM_MID;
-	MOVLW      120
+;12f675 MPPT.mpas,150 :: 		VOLPWM:=PWM_MIN;
+	MOVLW      10
 	MOVWF      _VOLPWM+0
-;12f675 MPPT.mpas,151 :: 		flag_inc:=False;
-	CLRF       _flag_inc+0
+;12f675 MPPT.mpas,151 :: 		flag_inc:=True;
+	MOVLW      255
+	MOVWF      _flag_inc+0
 ;12f675 MPPT.mpas,152 :: 		vol_prev1:=0;
 	CLRF       _vol_prev1+0
 	CLRF       _vol_prev1+1
@@ -250,12 +251,12 @@ L__main19:
 	GOTO       L__main19
 ;12f675 MPPT.mpas,161 :: 		LED1:=1;
 	BSF        GP5_bit+0, BitPos(GP5_bit+0)
-;12f675 MPPT.mpas,162 :: 		delay_ms(500);
-	MOVLW      3
+;12f675 MPPT.mpas,162 :: 		delay_ms(300);
+	MOVLW      2
 	MOVWF      R11+0
-	MOVLW      138
+	MOVLW      134
 	MOVWF      R12+0
-	MOVLW      85
+	MOVLW      153
 	MOVWF      R13+0
 L__main20:
 	DECFSZ     R13+0, 1
@@ -264,8 +265,6 @@ L__main20:
 	GOTO       L__main20
 	DECFSZ     R11+0, 1
 	GOTO       L__main20
-	NOP
-	NOP
 ;12f675 MPPT.mpas,163 :: 		LED1:=0;
 	BCF        GP5_bit+0, BitPos(GP5_bit+0)
 ;12f675 MPPT.mpas,164 :: 		clrwdt;
@@ -581,11 +580,12 @@ L__main52:
 ;12f675 MPPT.mpas,229 :: 		LED1_tm:=100;
 	MOVLW      100
 	MOVWF      _LED1_tm+0
-;12f675 MPPT.mpas,230 :: 		VOLPWM:=PWM_MID;
-	MOVLW      120
+;12f675 MPPT.mpas,230 :: 		VOLPWM:=PWM_MIN;
+	MOVLW      10
 	MOVWF      _VOLPWM+0
-;12f675 MPPT.mpas,231 :: 		flag_inc:=false;
-	CLRF       _flag_inc+0
+;12f675 MPPT.mpas,231 :: 		flag_inc:=True;
+	MOVLW      255
+	MOVWF      _flag_inc+0
 ;12f675 MPPT.mpas,232 :: 		power_curr:=0;
 	CLRF       _power_curr+0
 	CLRF       _power_curr+1
@@ -624,7 +624,7 @@ L__main65:
 L__main61:
 ;12f675 MPPT.mpas,246 :: 		if VOLPWM>PWM_MIN then
 	MOVF       _VOLPWM+0, 0
-	SUBLW      1
+	SUBLW      10
 	BTFSC      STATUS+0, 0
 	GOTO       L__main67
 ;12f675 MPPT.mpas,247 :: 		Dec(VOLPWM)
@@ -633,7 +633,7 @@ L__main61:
 ;12f675 MPPT.mpas,248 :: 		else begin
 L__main67:
 ;12f675 MPPT.mpas,249 :: 		VOLPWM:=PWM_MIN;
-	MOVLW      1
+	MOVLW      10
 	MOVWF      _VOLPWM+0
 ;12f675 MPPT.mpas,250 :: 		flag_inc:=true;
 	MOVLW      255
