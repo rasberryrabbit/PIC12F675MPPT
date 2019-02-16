@@ -385,7 +385,7 @@ L__main73:
 L__main40:
 ;12f675 MPPT.mpas,190 :: 		end;
 	MOVF       _i+0, 0
-	XORLW      8
+	XORLW      3
 	BTFSC      STATUS+0, 2
 	GOTO       L__main38
 	INCF       _i+0, 1

@@ -37,7 +37,7 @@ const
    _PWM_CHECK = 4500 div 2;
 
    cLM358_diff = 0;
-   adc_max_loop = 10;     // 8
+   adc_max_loop = 5;     // 8
 
 label
    CONTLOOP;
