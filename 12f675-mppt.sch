@@ -407,7 +407,7 @@ L Device:R R15
 U 1 1 56E68956
 P 9650 4300
 F 0 "R15" V 9730 4300 50  0000 C CNN
-F 1 "4.7k" V 9650 4300 50  0000 C CNN
+F 1 "3.3k" V 9650 4300 50  0000 C CNN
 F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 9580 4300 50  0001 C CNN
 F 3 "" H 9650 4300 50  0000 C CNN
 	1    9650 4300
@@ -800,7 +800,7 @@ Wire Wire Line
 Wire Wire Line
 	4900 5600 5650 5600
 Text Notes 9850 4250 0    50   ~ 0
-R15 : 6A -> 3.3k
+6A, R2 = R4 = 47k
 $Comp
 L power:+24V #PWR01
 U 1 1 5C4DB455
