@@ -176,7 +176,7 @@ begin
        vol_prev1:=adc_vol;
        // Read Sync with PWM clock
        doADCRead:=0;
-       while doADCRead=0 do ;
+       //while doADCRead=0 do ;
        // adc read
        adc_cur:=ADC_Read(2);
        adc_vol:=ADC_Read(3);
