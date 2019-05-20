@@ -44,7 +44,7 @@ label
 
 var
    LED1:sbit at GP5_bit;
-   PWM_SIG:sbit at GP0_bit;
+   PWM_SIG:sbit at GP2_bit;
    Write_OPAMP : sbit at GP3_bit;
    ON_PWM, VOLPWM : byte;
    TICK_1000 : word;
@@ -83,11 +83,11 @@ end;
 
 begin
      CMCON:=7;
-     ANSEL:=%00111100;       // ADC conversion clock = fRC, AN3, AN2;
+     ANSEL:=%00111001;       // ADC conversion clock = fRC, AN3, AN0;
 
-     TRISIO0_bit:=0;      // PWM
-     TRISIO1_bit:=1;      // not Connected
-     TRISIO2_bit:=1;      // AN2
+     TRISIO0_bit:=1;      // AN0
+     TRISIO1_bit:=1;      // VREF
+     TRISIO2_bit:=0;      // PWM
      TRISIO4_bit:=1;      // AN3
      TRISIO5_bit:=0;      // LED
      VCFG_bit:=1;
@@ -112,7 +112,7 @@ begin
      if Write_OPAMP=0 then begin
        Delay_100ms;
        Delay_100ms;
-       adc_cur:=ADC_Read(2);
+       adc_cur:=ADC_Read(0);
        EEPROM_Write(0, Lo(adc_cur));
        Delay_100ms;
        LED1:=1;
@@ -178,10 +178,10 @@ begin
        doADCRead:=0;
        while doADCRead=0 do ;
        // adc read
-       adc_cur:=ADC_Read(2);
+       adc_cur:=ADC_Read(0);
        adc_vol:=ADC_Read(3);
        for i:=0 to adc_max_loop-2 do begin
-         xtmp:=ADC_Read(2);
+         xtmp:=ADC_Read(0);
          wtmp:=ADC_Read(3);
          adc_vol:=(adc_vol+wtmp) div 2;
          if xtmp > adc_cur then

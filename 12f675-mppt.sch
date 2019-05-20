@@ -1,13 +1,13 @@
 EESchema Schematic File Version 4
 LIBS:12f675-mppt-cache
-EELAYER 26 0
+EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "Simple MPPT with 12F675 v5"
-Date "2019-02-15"
-Rev "1.62"
+Title "Simple MPPT with 12F675 v6"
+Date "2019-05-20"
+Rev "1.7"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -484,10 +484,6 @@ Connection ~ 5850 5600
 Wire Wire Line
 	5850 2650 5850 2700
 Wire Wire Line
-	5250 3400 5300 3400
-Wire Wire Line
-	5450 3400 5450 3300
-Wire Wire Line
 	5450 3000 5550 3000
 Wire Wire Line
 	5500 2350 5850 2350
@@ -546,8 +542,6 @@ Connection ~ 9500 2200
 Wire Notes Line
 	5900 5850 9800 5850
 Wire Wire Line
-	5250 3600 6100 3600
-Wire Wire Line
 	1850 4200 1850 5600
 Connection ~ 1850 5600
 Wire Wire Line
@@ -575,7 +569,6 @@ Wire Wire Line
 Connection ~ 6100 5600
 Wire Wire Line
 	6100 4750 6100 3600
-Connection ~ 6100 3600
 Wire Notes Line
 	5900 3500 5900 5850
 Wire Notes Line
@@ -978,15 +971,28 @@ F 3 "" H 5100 2800 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5300 3400 5300 2950
-Wire Wire Line
 	5300 2950 5100 2950
-Connection ~ 5300 3400
-Wire Wire Line
-	5300 3400 5450 3400
 Wire Wire Line
 	5100 2350 5100 2650
 Connection ~ 5100 2350
 Wire Wire Line
 	5100 2350 3500 2350
+Wire Wire Line
+	6100 3600 5750 3600
+Wire Wire Line
+	5750 3600 5750 3400
+Wire Wire Line
+	5750 3400 5250 3400
+Connection ~ 6100 3600
+Wire Wire Line
+	5300 2950 5300 3300
+Wire Wire Line
+	5300 3300 5450 3300
+Wire Wire Line
+	5650 3300 5650 3600
+Wire Wire Line
+	5650 3600 5250 3600
+Connection ~ 5450 3300
+Wire Wire Line
+	5450 3300 5650 3300
 $EndSCHEMATC

@@ -14,9 +14,9 @@ _Interrupt:
 	GOTO       L__Interrupt3
 ;12f675 MPPT.mpas,64 :: 		PWM_SIG:=not PWM_SIG;
 	MOVLW
-	XORWF      GP0_bit+0, 1
+	XORWF      GP2_bit+0, 1
 ;12f675 MPPT.mpas,65 :: 		if PWM_SIG=0 then begin
-	BTFSC      GP0_bit+0, BitPos(GP0_bit+0)
+	BTFSC      GP2_bit+0, BitPos(GP2_bit+0)
 	GOTO       L__Interrupt6
 ;12f675 MPPT.mpas,66 :: 		doADCRead:=1;
 	MOVLW      1
@@ -76,15 +76,15 @@ _main:
 ;12f675 MPPT.mpas,85 :: 		CMCON:=7;
 	MOVLW      7
 	MOVWF      CMCON+0
-;12f675 MPPT.mpas,86 :: 		ANSEL:=%00111100;       // ADC conversion clock = fRC, AN3, AN2;
-	MOVLW      60
+;12f675 MPPT.mpas,86 :: 		ANSEL:=%00111001;       // ADC conversion clock = fRC, AN3, AN0;
+	MOVLW      57
 	MOVWF      ANSEL+0
-;12f675 MPPT.mpas,88 :: 		TRISIO0_bit:=0;      // PWM
-	BCF        TRISIO0_bit+0, BitPos(TRISIO0_bit+0)
-;12f675 MPPT.mpas,89 :: 		TRISIO1_bit:=1;      // not Connected
+;12f675 MPPT.mpas,88 :: 		TRISIO0_bit:=1;      // AN0
+	BSF        TRISIO0_bit+0, BitPos(TRISIO0_bit+0)
+;12f675 MPPT.mpas,89 :: 		TRISIO1_bit:=1;      // VREF
 	BSF        TRISIO1_bit+0, BitPos(TRISIO1_bit+0)
-;12f675 MPPT.mpas,90 :: 		TRISIO2_bit:=1;      // AN2
-	BSF        TRISIO2_bit+0, BitPos(TRISIO2_bit+0)
+;12f675 MPPT.mpas,90 :: 		TRISIO2_bit:=0;      // PWM
+	BCF        TRISIO2_bit+0, BitPos(TRISIO2_bit+0)
 ;12f675 MPPT.mpas,91 :: 		TRISIO4_bit:=1;      // AN3
 	BSF        TRISIO4_bit+0, BitPos(TRISIO4_bit+0)
 ;12f675 MPPT.mpas,92 :: 		TRISIO5_bit:=0;      // LED
@@ -98,7 +98,7 @@ _main:
 ;12f675 MPPT.mpas,97 :: 		LED1:=0;
 	BCF        GP5_bit+0, BitPos(GP5_bit+0)
 ;12f675 MPPT.mpas,98 :: 		PWM_SIG:=1;
-	BSF        GP0_bit+0, BitPos(GP0_bit+0)
+	BSF        GP2_bit+0, BitPos(GP2_bit+0)
 ;12f675 MPPT.mpas,99 :: 		LED1_tm:=100;
 	MOVLW      100
 	MOVWF      _LED1_tm+0
@@ -129,9 +129,8 @@ _main:
 	CALL       _Delay_100ms+0
 ;12f675 MPPT.mpas,114 :: 		Delay_100ms;
 	CALL       _Delay_100ms+0
-;12f675 MPPT.mpas,115 :: 		adc_cur:=ADC_Read(2);
-	MOVLW      2
-	MOVWF      FARG_ADC_Read_channel+0
+;12f675 MPPT.mpas,115 :: 		adc_cur:=ADC_Read(0);
+	CLRF       FARG_ADC_Read_channel+0
 	CALL       _ADC_Read+0
 	MOVF       R0+0, 0
 	MOVWF      _adc_cur+0
@@ -322,9 +321,8 @@ L__main30:
 	XORLW      0
 	BTFSC      STATUS+0, 2
 	GOTO       L__main30
-;12f675 MPPT.mpas,181 :: 		adc_cur:=ADC_Read(2);
-	MOVLW      2
-	MOVWF      FARG_ADC_Read_channel+0
+;12f675 MPPT.mpas,181 :: 		adc_cur:=ADC_Read(0);
+	CLRF       FARG_ADC_Read_channel+0
 	CALL       _ADC_Read+0
 	MOVF       R0+0, 0
 	MOVWF      _adc_cur+0
@@ -341,9 +339,8 @@ L__main30:
 ;12f675 MPPT.mpas,183 :: 		for i:=0 to adc_max_loop-2 do begin
 	CLRF       _i+0
 L__main35:
-;12f675 MPPT.mpas,184 :: 		xtmp:=ADC_Read(2);
-	MOVLW      2
-	MOVWF      FARG_ADC_Read_channel+0
+;12f675 MPPT.mpas,184 :: 		xtmp:=ADC_Read(0);
+	CLRF       FARG_ADC_Read_channel+0
 	CALL       _ADC_Read+0
 	MOVF       R0+0, 0
 	MOVWF      _xtmp+0
