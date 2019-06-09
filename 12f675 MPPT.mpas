@@ -200,6 +200,7 @@ begin
        power_prev:= power_curr;
        power_curr:= dword(adc_vol * adc_cur);
 
+       {
        // prevent low voltage condition
        wtmp:=TICK_1000;
        if ON_PWM>PWM_MID then begin
@@ -209,6 +210,7 @@ begin
          end;
        end else
          voltime:=wtmp;
+       }
 
        if adc_cur>LM358_diff then begin
          // power check
