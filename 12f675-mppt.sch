@@ -1,6 +1,5 @@
 EESchema Schematic File Version 4
-LIBS:12f675-mppt-cache
-EELAYER 29 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -723,7 +722,7 @@ Wire Wire Line
 Wire Wire Line
 	7750 2200 7800 2200
 Wire Wire Line
-	7250 3500 7750 3500
+	7250 3500 7450 3500
 Wire Wire Line
 	5850 5600 5650 5600
 Wire Wire Line
@@ -995,4 +994,23 @@ Wire Wire Line
 Connection ~ 5450 3300
 Wire Wire Line
 	5450 3300 5650 3300
+$Comp
+L Device:D_Zener D7
+U 1 1 608BDF62
+P 7450 3300
+F 0 "D7" V 7404 3380 50  0000 L CNN
+F 1 "1N4733A 5.1V" V 7495 3380 50  0000 L CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 7450 3300 50  0001 C CNN
+F 3 "~" H 7450 3300 50  0001 C CNN
+	1    7450 3300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7450 3450 7450 3500
+Connection ~ 7450 3500
+Wire Wire Line
+	7450 3500 7750 3500
+Wire Wire Line
+	7450 3150 7450 3050
+Connection ~ 7450 3050
 $EndSCHEMATC
