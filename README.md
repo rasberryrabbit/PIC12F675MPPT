@@ -23,5 +23,5 @@ Q1 gate voltage is 3.6v. It's depend on FET specification.
 Q1, Q2 can skip heat spreader with low POWER Solar panel. No heat with 10W panel.  
   
 (Note) Sometimes MPPT stalls no output. It caused by low FET bootstrap voltage.  
-It's very rare condition. It may fixed by R9 changes.  
+It's very rare condition. It may fixed by R9 change.  
 
