@@ -288,7 +288,7 @@ F 3 "" H 3100 3700 60  0000 C CNN
 	1    3100 3700
 	1    0    0    -1  
 $EndComp
-Text Label 5100 2350 2    60   ~ 0
+Text Label 6400 2350 2    60   ~ 0
 BootStrap
 Text Label 7050 3600 2    60   ~ 0
 PV-Current
@@ -490,8 +490,6 @@ Wire Wire Line
 	6600 2350 6600 2600
 Connection ~ 5850 2350
 Wire Wire Line
-	5200 2350 5100 2350
-Wire Wire Line
 	6250 2700 6300 2700
 Connection ~ 6300 2800
 Wire Wire Line
@@ -643,7 +641,7 @@ Wire Wire Line
 Wire Wire Line
 	8950 5100 8950 4850
 Wire Wire Line
-	7250 2200 3300 2200
+	7250 2200 5000 2200
 $Comp
 L Device:CP C7
 U 1 1 56E7CE1F
@@ -958,24 +956,12 @@ Wire Wire Line
 	1350 950  1200 950 
 Wire Wire Line
 	1200 1300 1350 1300
-$Comp
-L Device:R R11
-U 1 1 5C640CF9
-P 5100 2800
-F 0 "R11" V 5180 2800 50  0000 C CNN
-F 1 "10k" V 5100 2800 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5030 2800 30  0001 C CNN
-F 3 "" H 5100 2800 30  0000 C CNN
-	1    5100 2800
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
-	5300 2950 5100 2950
+	5300 2950 4850 2950
 Wire Wire Line
-	5100 2350 5100 2650
-Connection ~ 5100 2350
+	4850 2350 4850 2650
 Wire Wire Line
-	5100 2350 3500 2350
+	4850 2350 3500 2350
 Wire Wire Line
 	6100 3600 5750 3600
 Wire Wire Line
@@ -1013,4 +999,22 @@ Wire Wire Line
 Wire Wire Line
 	7450 3150 7450 3050
 Connection ~ 7450 3050
+$Comp
+L Device:R R11
+U 1 1 5C640CF9
+P 4850 2800
+F 0 "R11" V 4930 2800 50  0000 C CNN
+F 1 "10k" V 4850 2800 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 4780 2800 30  0001 C CNN
+F 3 "" H 4850 2800 30  0000 C CNN
+	1    4850 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5200 2350 5000 2350
+Wire Wire Line
+	5000 2350 5000 2200
+Connection ~ 5000 2200
+Wire Wire Line
+	5000 2200 3300 2200
 $EndSCHEMATC
