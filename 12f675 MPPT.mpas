@@ -217,11 +217,10 @@ begin
          if power_curr = power_prev then begin
            LED1_tm:=250;
            goto CONTLOOP;
-         end else if power_curr < power_prev then begin
+         end else if power_curr <> power_prev then begin
            LED1_tm:=150;
            flag_inc:=not flag_inc;
-         end else
-           LED1_tm:=200;
+         end;
          {
          if (adc_vol+vol_prev2+1) div 2 < vol_prev1 then begin
            flag_inc:=true;
