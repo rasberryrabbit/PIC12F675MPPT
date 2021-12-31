@@ -14,7 +14,7 @@ Transistor 2N2907A -> BC557 or compatible(reverse pin order)
   
 L1 100~330uH  
   
-LM358N can replace by other pin-compatible regular OP-AMP. TL072 is more works better(tested).  
+LM358N can replace by other pin-compatible regular OP-AMP. TLC272 is more works better.  
   
 D8-D9 used for 3.6v Reference. Each has about 1.8v voltage drop.  
   
