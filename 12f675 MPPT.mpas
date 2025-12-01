@@ -157,7 +157,7 @@ begin
 
      TMR1ON_bit:=1;
 
-     VOLPWM:=PWM_MIN;
+     VOLPWM:=PWM_START;
      flag_inc:=True;
      vol_prev1:=0;
 
