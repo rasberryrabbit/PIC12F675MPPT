@@ -53,8 +53,8 @@ var
    doADCRead : byte;
 
    LED1_tm : word;
-   prevtime, powertime, voltime, wdtimer : word;
-   adc_vol, adc_cur, vol_prev1, vol_prev2 : word;
+   prevtime, powertime, wdtimer : word;
+   adc_vol, adc_cur, adc_cur_last : word;
    power_prev, power_curr : dword;
    i, LM358_diff : byte;
    flag_inc : boolean;
@@ -159,12 +159,11 @@ begin
 
      VOLPWM:=PWM_START;
      flag_inc:=True;
-     vol_prev1:=0;
+     adc_cur_last:=0;
 
      powertime:=0;
      prevtime:=0;
-     voltime:=0;
-     
+
      // starting LED
      clrwdt;
      delay_ms(300);
@@ -189,8 +188,7 @@ begin
        end;
 
        // save previous adc values
-       vol_prev2:=vol_prev1;
-       vol_prev1:=adc_vol;
+       adc_cur_last:=adc_cur;
        // Read Sync with PWM clock
        doADCRead:=0;
        while doADCRead=0 do ;
@@ -216,18 +214,6 @@ begin
        power_prev:= power_curr;
        power_curr:= dword(adc_vol * adc_cur);
 
-       {
-       // prevent low voltage condition
-       wtmp:=TICK_1000;
-       if ON_PWM>PWM_MID then begin
-         if wtmp - voltime > _PWM_CHECK then begin
-           voltime:=wtmp;
-           adc_cur:=LM358_diff;
-         end;
-       end else
-         voltime:=wtmp;
-       }
-
        if adc_cur>LM358_diff then begin
          // power check
          if power_curr = power_prev then begin
@@ -235,14 +221,13 @@ begin
            goto CONTLOOP;
          end else if power_curr < power_prev then begin
            LED1_tm:=300;
-           flag_inc:=not flag_inc;
+           // Try to fixing low power condition
+           if adc_cur<adc_cur_last then
+             flag_inc:=true
+             else
+             flag_inc:=not flag_inc;
          end else
            LED1_tm:=300;
-         {
-         if (adc_vol+vol_prev2+1) div 2 < vol_prev1 then begin
-           flag_inc:=true;
-         end;
-         }
        end else begin
          LED1_tm:=200;
          VOLPWM:=PWM_START;
