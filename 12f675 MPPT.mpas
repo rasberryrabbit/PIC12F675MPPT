@@ -35,7 +35,7 @@ const
    TMR1H_LOAD=$FC;           // 1ms, 65535 - 1000
 
    VOLMUL = 4;               // 25V(1024) : 6A(1024), don't exceed 8
-   _UPDATE_INT = 25;         // 25ms
+   _UPDATE_INT = 40;         // 25ms+
    _PWM_CHECK = 4500 div 2;
 
    cLM358_diff = 0;
