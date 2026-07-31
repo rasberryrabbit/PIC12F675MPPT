@@ -203,7 +203,7 @@ begin
            adc_vol:=wtmp;
          end;
        end;
-       adc_vol:=adc_vol * VOLMUL;
+       //adc_vol:=adc_vol * VOLMUL;
 
        // check time
        wtmp:=TICK_1000;
