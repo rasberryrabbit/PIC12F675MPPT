@@ -198,7 +198,7 @@ begin
        for i:=1 to adc_max_loop-1 do begin
          xtmp:=ADC_Read(0);
          wtmp:=ADC_Read(3);
-         if xtmp > adc_cur then begin
+         if xtmp < adc_cur then begin
            adc_cur:=xtmp;
            adc_vol:=wtmp;
          end;
