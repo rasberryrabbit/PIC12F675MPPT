@@ -200,10 +200,12 @@ begin
        for i:=1 to adc_max_loop-1 do begin
          xtmp:=ADC_Read(0);
          wtmp:=ADC_Read(3);
-         if xtmp < adc_cur then begin
-           adc_cur:=xtmp;
-           adc_vol:=wtmp;
-         end;
+         adc_vol:=(adc_vol+wtmp) div 2;
+         adc_cur:=(adc_cur+xtmp) div 2;
+         //if xtmp < adc_cur then begin
+         //  adc_cur:=xtmp;
+         //  adc_vol:=wtmp;
+         //end;
        end;
        adc_vol:=adc_vol * VOLMUL;
 
