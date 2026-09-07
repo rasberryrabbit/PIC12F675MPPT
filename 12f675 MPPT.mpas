@@ -23,11 +23,12 @@ program _12f675_MPPT;
 
 {$define USE_EEPROM_LM358DIFF}
 {$define Write_OPAMP_DIFF}
+{ $define ADC_LOOP}
 
 const
    PWM_MAX = 200;
    TMR0BASE = 255-PWM_MAX;
-   PWM_MIN = 10;
+   PWM_MIN = 20;
    PWM_START = PWM_MAX * 30 div 100;
    PWM_MID = PWM_MAX div 2-5;
 
@@ -194,9 +195,17 @@ begin
        // Read Sync with PWM clock
        doADCRead:=0;
        while doADCRead=0 do ;
+{$ifndef ADC_LOOP}
+       // delay 200us, 250us , 250-50 = 200
+       Delay_50us;
+       Delay_50us;
+       Delay_50us;
+       Delay_50us;
+{$endif}
        // adc read
        adc_cur:=ADC_Read(0);
        adc_vol:=ADC_Read(3);
+{$ifdef ADC_LOOP}
        for i:=1 to adc_max_loop-1 do begin
          xtmp:=ADC_Read(0);
          wtmp:=ADC_Read(3);
@@ -207,6 +216,7 @@ begin
          //  adc_vol:=wtmp;
          //end;
        end;
+{$endif}
        adc_vol:=adc_vol * VOLMUL;
 
        // check time
