@@ -184,6 +184,10 @@ begin
          LED1 := not LED1;
        end;
        
+       // reset
+       if Write_OPAMP=0 then
+         Delay_ms(2500);
+       
        wtmp := TICK_1000;
        if tick_diff(wtmp, wdtimer)>1000 then begin
          clrwdt;
