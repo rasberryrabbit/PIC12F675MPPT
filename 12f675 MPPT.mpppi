@@ -15,37 +15,33 @@ Value=0
 Value=2000
 [EEPROM_DEFINITION]
 Value=
+[HEADER_PATH]
+Count=0
+[HEADERS]
+Count=0
 [FILES]
-Count=1
 File0=12f675 MPPT.mpas
+Count=1
 [BINARIES]
 Count=0
 [IMAGES]
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=1
 File0=12f675 MPPT.mpas
-[EEPROM]
 Count=1
+[EEPROM]
 File0=12f675 MPPT.ihex
+Count=1
 [ACTIVE_COMMENTS_FILES]
 Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Count=3
-Path0=F:\mikroPascal PRO for PIC\Defs\
-Path1=F:\mikroPascal PRO for PIC\Uses\P16\
-Path2=F:\mikroPascal PRO for PIC\works\12f675MPPT\
-[HEADER_PATH]
-Count=0
-[HEADERS]
 Count=0
 [PLDS]
 Count=0
 [Useses]
-Count=20
 File0=ADC
 File1=Button
 File2=Conversions
@@ -66,7 +62,15 @@ File16=String
 File17=Time
 File18=Trigon
 File19=Trigonometry
+Count=20
 [EXPANDED_NODES]
-Node0=Sources
-Node1=Output Files
-Count=2
+Count=0
+[LIB_EXPANDED_NODES]
+Count=0
+[PROGRAMMER_TYPE]
+Value=mikroE mikroProg
+[CODEGRIP_OPTIONS]
+CODEGRIP_SPEED=0
+CODEGRIP_VERIFY_AFTER=0
+CODEGRIP_SWBP_ENABLED=0
+CODEGRIP_PROGRAMMING_TYPE=

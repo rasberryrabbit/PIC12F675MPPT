@@ -37,8 +37,9 @@ const
 
    VOLMUL = 4;               // 25V(1024) : 6A(1024), don't exceed 8
    _UPDATE_INT = 40;         // 25ms+
-   _CHECK_P_LOW = 500 div _UPDATE_INT;
+   _CHECK_P_LOW = 2;         // 500 div _UPDATE_INT;
    _PWM_CHECK = 4500 div 2;
+   _dead_band_limit = 2000;        // 1000, 500 = RC filter(low noise), 2000 = high noise
 
    cLM358_diff = 0;
    adc_max_loop = 4;
@@ -57,7 +58,7 @@ var
    LED1_tm : word;
    prevtime, powertime, wdtimer : word;
    adc_vol, adc_cur, adc_cur_last : word;
-   power_prev, power_curr : dword;
+   power_prev, power_curr, dead_band : dword;
    i, LM358_diff : byte;
    flag_inc : boolean;
    wtmp, xtmp : word;
@@ -231,6 +232,11 @@ begin
 
        power_prev:= power_curr;
        power_curr:= dword(adc_vol * adc_cur);
+       
+       // 0.5~1% , dead_band, ~0.5% = 256
+       dead_band := power_curr div 256;
+       if dead_band < _dead_band_limit then
+         dead_band := _dead_band_limit;
 
        if adc_cur>LM358_diff then begin
          // power check
@@ -239,6 +245,11 @@ begin
            power_low:=0;
            goto CONTLOOP;
          end else if power_curr < power_prev then begin
+           if power_prev-power_curr < dead_band then begin
+             LED1_tm:=500;
+             power_low:=0;
+             goto CONTLOOP;
+           end;
            LED1_tm:=150;
            Inc(power_low);
            // Try to fixing low power condition
@@ -247,6 +258,11 @@ begin
              else
              flag_inc:=not flag_inc;
          end else begin
+           if power_curr-power_prev < dead_band then begin
+             LED1_tm:=500;
+             power_low:=0;
+             goto CONTLOOP;
+           end;
            LED1_tm:=300;
            power_low:=0;
          end;
