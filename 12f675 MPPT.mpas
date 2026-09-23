@@ -233,8 +233,8 @@ begin
        power_prev:= power_curr;
        power_curr:= dword(adc_vol * adc_cur);
        
-       // 0.5~1% , dead_band, ~0.537% = (div 256 + div 1024 + div 2048)
-       dead_band := (power_curr div 256) + (power_curr div 1024) + (power_curr div 2048);
+       // 0.5~1% , dead_band, ~0.561% = (div 256 + div 1024 + div 2048 + div 4096)
+       dead_band := (power_curr div 256) + (power_curr div 1024) + (power_curr div 2048) + (power_curr div 4096);
        if dead_band < _dead_band_limit then
          dead_band := _dead_band_limit;
 
