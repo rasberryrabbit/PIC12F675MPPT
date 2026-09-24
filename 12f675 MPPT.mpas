@@ -28,18 +28,20 @@ program _12f675_MPPT;
 const
    PWM_MAX = 200;
    TMR0BASE = 255-PWM_MAX;
-   PWM_MIN = 20;
-   PWM_START = PWM_MAX * 30 div 100;
+   PWM_MIN = PWM_MAX * 6 div 100;
+   PWM_START = PWM_MAX * 10 div 100;
+   PWM_END = PWM_MAX * 45 div 100;
    PWM_MID = PWM_MAX div 2-5;
 
    TMR1L_LOAD=$17;
    TMR1H_LOAD=$FC;           // 1ms, 65535 - 1000
 
    VOLMUL = 4;               // 25V(1024) : 6A(1024), don't exceed 8
-   _UPDATE_INT = 40;         // 25ms+
+   _UPDATE_INT = 50;         // 25ms+
    _CHECK_P_LOW = 2;         // 500 div _UPDATE_INT;
    _PWM_CHECK = 4500 div 2;
-   _NOISE_MARGIN = 3;
+   _NOISE_MARGIN = 2;
+   _dead_band_limit = 50;
 
    cLM358_diff = 0;
    adc_max_loop = 4;
@@ -51,13 +53,13 @@ var
    LED1:sbit at GP5_bit;
    PWM_SIG:sbit at GP2_bit;
    Write_OPAMP : sbit at GP3_bit;
-   ON_PWM, VOLPWM, power_low : byte;
+   ON_PWM, VOLPWM : byte;
    TICK_1000 : word;
    doADCRead : byte;
 
    LED1_tm : word;
    prevtime, powertime, wdtimer : word;
-   adc_vol, adc_cur, adc_cur_last : word;
+   adc_vol, adc_cur, raw_vol : word;
    power_prev, power_curr, dead_band : dword;
    i, LM358_diff : byte;
    flag_inc : boolean;
@@ -113,7 +115,6 @@ begin
      ON_PWM:=0;
      VOLPWM:=0;
      TICK_1000:=0;
-     power_low:=0;
 
      OPTION_REG:=%01011111;        // ~4KHz @ 4MHz
      TMR0IE_bit:=1;
@@ -163,7 +164,6 @@ begin
 
      VOLPWM:=PWM_START;
      flag_inc:=True;
-     adc_cur_last:=0;
 
      powertime:=0;
      prevtime:=0;
@@ -195,8 +195,6 @@ begin
          wdtimer:=0;
        end;
 
-       // save previous adc values
-       adc_cur_last:=adc_cur;
        // Read Sync with PWM clock
        doADCRead:=0;
        while doADCRead=0 do ;
@@ -209,12 +207,12 @@ begin
 {$endif}
        // adc read
        adc_cur:=ADC_Read(0);
-       adc_vol:=ADC_Read(3);
+       raw_vol:=ADC_Read(3);
 {$ifdef ADC_LOOP}
        for i:=1 to adc_max_loop-1 do begin
          xtmp:=ADC_Read(0);
          wtmp:=ADC_Read(3);
-         adc_vol:=(adc_vol+wtmp) div 2;
+         raw_vol:=(raw_vol+wtmp) div 2;
          adc_cur:=(adc_cur+xtmp) div 2;
          //if xtmp < adc_cur then begin
          //  adc_cur:=xtmp;
@@ -222,7 +220,7 @@ begin
          //end;
        end;
 {$endif}
-       adc_vol:=adc_vol * VOLMUL;
+       adc_vol:=raw_vol * VOLMUL;
 
        // check time
        wtmp:=TICK_1000;
@@ -233,56 +231,42 @@ begin
        power_prev:= power_curr;
        power_curr:= dword(adc_vol * adc_cur);
        
-       dead_band := dword( adc_vol + adc_cur ) * VOLMUL * _NOISE_MARGIN;
-       if dead_band < 50 then
-         dead_band := 50;
+       dead_band := dword( raw_vol + adc_cur ) * VOLMUL * _NOISE_MARGIN;
+       if dead_band < _dead_band_limit then
+         dead_band := _dead_band_limit;
 
-       if adc_cur>LM358_diff then begin
+       if adc_cur>(LM358_diff + 5) then begin
          // power check
          if power_curr = power_prev then begin
            LED1_tm:=500;
-           power_low:=0;
            goto CONTLOOP;
          end else if power_curr < power_prev then begin
            if power_prev-power_curr < dead_band then begin
              LED1_tm:=500;
-             power_low:=0;
              goto CONTLOOP;
            end;
            LED1_tm:=150;
-           Inc(power_low);
-{$IFDEF FIX_LOW_CURR}
-           // Try to fixing low power condition
-           if (power_low>=_CHECK_P_LOW) and (adc_cur<adc_cur_last) then
-             flag_inc:=true
-             else
-{$ENDIF}
-             flag_inc:=not flag_inc;
+           flag_inc:=not flag_inc;
          end else begin
            if power_curr-power_prev < dead_band then begin
              LED1_tm:=500;
-             power_low:=0;
              goto CONTLOOP;
            end;
            LED1_tm:=300;
-           power_low:=0;
          end;
        end else begin
          LED1_tm:=150;
-         VOLPWM:=PWM_START;
          flag_inc:=True;
          power_curr:=0;
          adc_cur:=0;
-         power_low:=0;
-         goto CONTLOOP;
        end;
 
        // PWM
        if flag_inc then begin
-         if VOLPWM<PWM_MAX then
+         if VOLPWM<PWM_END then
            Inc(VOLPWM)
            else begin
-             VOLPWM:=PWM_MAX;
+             VOLPWM:=PWM_END;
              flag_inc:=false;
            end;
        end else begin
