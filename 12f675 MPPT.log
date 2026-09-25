@@ -1,0 +1,14 @@
+0	1	mPPic.exe -MSF -DBG -pP12F675 -Y -DL -O11111114 -fo4 -N"E:\dev\12F675MPPT\12f675 MPPT.mpppi" -SP"F:\mikroPascal PRO for PIC\Defs\" -SP"F:\mikroPascal PRO for PIC\Uses\P16\" -SP"E:\dev\12F675MPPT\" -EH"E:\dev\12F675MPPT\12f675 MPPT.ihex" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl" "__Lib_CType.mcl" "__Lib_String.mcl" "__Lib_CStdlib.mcl" "__Lib_MemManager.mcl" "__Lib_Conversions.mcl" "__Lib_Time.mcl" "__Lib_Trigon.mcl" "__Lib_Trigonometry.mcl" "__Lib_Button.mcl" "__Lib_Manchester.mcl" "__Lib_OneWire.mcl" "__Lib_PS2.mcl" "__Lib_Sound.mcl" "__Lib_SoftI2C.mcl" "__Lib_SoftSPI.mcl" "__Lib_SoftUART.mcl" "__Lib_ADC_A_E.mcl" "__Lib_EEPROM.mcl" "__Lib_LcdConsts.mcl" "__Lib_Lcd.mcl" "12f675 MPPT.mpas"	 
+diagnostics: 0	155	Available RAM: 48 [bytes], Available ROM: 1024 [bytes]	 
+diagnostics: 0	133	Compilation Started	E:\dev\12F675MPPT\12f675 MPPT.mpas
+hint: 1	1015	Hint: Compiling unit "E:\dev\12F675MPPT\12f675 MPPT.mpas"	12f675 MPPT.mpas
+hint: 67	1021	Hint: interrupt handler (Interrupt at 0x0004)	12f675 MPPT.mpas
+hint: 293	1010	Hint: Unit "12f675 MPPT.mpas" has been recompiled	12f675 MPPT.mpas
+diagnostics: 0	134	Compiled Successfully	E:\dev\12F675MPPT\12f675 MPPT.mpas
+diagnostics: 0	139	All files Compiled in 32 ms	 
+hint: 0	1144	Used RAM (bytes): 41 (85%)  Free RAM (bytes): 7 (15%)	Used RAM (bytes): 41 (85%)  Free RAM (bytes): 7 (15%)
+hint: 0	1144	Used ROM (program words): 881 (86%)  Free ROM (program words): 143 (14%)	Used ROM (program words): 881 (86%)  Free ROM (program words): 143 (14%)
+diagnostics: 0	145	Project Linked Successfully	12f675 MPPT.mpppi
+diagnostics: 0	140	Linked in 31 ms	 
+diagnostics: 0	141	Project '12f675 MPPT.mpppi' completed: 219 ms	 
+diagnostics: 0	103	Finished successfully: 25 9 2026, 15:54:58	12f675 MPPT.mpppi

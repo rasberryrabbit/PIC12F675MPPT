@@ -30,7 +30,7 @@ const
    TMR0BASE = 255-PWM_MAX;
    PWM_MIN = PWM_MAX * 6 div 100;
    PWM_START = PWM_MAX * 10 div 100;
-   PWM_END = PWM_MAX * 45 div 100;
+   PWM_END = PWM_MAX * 90 div 100;
    PWM_MID = PWM_MAX div 2-5;
 
    TMR1L_LOAD=$17;
@@ -239,7 +239,7 @@ begin
            dead_band := power_curr div 128;
        end;
 
-       if adc_cur>(LM358_diff + 5) then begin
+       if adc_cur>(LM358_diff + 2) then begin
          // power check
          if power_curr = power_prev then begin
            LED1_tm:=500;
@@ -263,6 +263,12 @@ begin
          flag_inc:=True;
          power_curr:=0;
          adc_cur:=0;
+         if VOLPWM < PWM_MID then begin
+           Inc(VOLPWM);
+         end else if VOLPWM > PWM_MID then begin
+           Dec(VOLPWM);
+         end;
+         goto CONTLOOP;
        end;
 
        // PWM
