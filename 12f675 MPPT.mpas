@@ -37,8 +37,7 @@ const
    TMR1H_LOAD=$FC;           // 1ms, 65535 - 1000
 
    VOLMUL = 4;               // 25V(1024) : 6A(1024), don't exceed 8
-   _UPDATE_INT = 50;         // 25ms+
-   _CHECK_P_LOW = 2;         // 500 div _UPDATE_INT;
+   _UPDATE_INT = 100;
    _PWM_CHECK = 4500 div 2;
    _NOISE_MARGIN = 2;
    _dead_band_limit = 50;
@@ -234,6 +233,11 @@ begin
        dead_band := dword( raw_vol + adc_cur ) * VOLMUL * _NOISE_MARGIN;
        if dead_band < _dead_band_limit then
          dead_band := _dead_band_limit;
+       // 0.78% limit for dead band, (0.5~1%)
+       if power_curr > 10000 then begin
+         if dead_band > (power_curr div 128) then
+           dead_band := power_curr div 128;
+       end;
 
        if adc_cur>(LM358_diff + 5) then begin
          // power check
