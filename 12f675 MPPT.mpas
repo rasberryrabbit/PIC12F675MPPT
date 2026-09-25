@@ -63,6 +63,8 @@ var
    i, LM358_diff : byte;
    flag_inc : boolean;
    wtmp, xtmp : word;
+   startup_mode : boolean;
+   startup_timer : word;
 
 procedure Interrupt(); iv 0x0004; ics ICS_AUTO;
 begin
@@ -175,6 +177,7 @@ begin
      LED1:=0;
      clrwdt;
      wdtimer:=0;
+     startup_mode:=false;
 
      while True do begin
        // LED
@@ -240,26 +243,39 @@ begin
        end;
 
        if adc_cur>(LM358_diff + 2) then begin
-         // power check
-         if power_curr = power_prev then begin
-           LED1_tm:=500;
-           goto CONTLOOP;
-         end else if power_curr < power_prev then begin
-           if power_prev-power_curr < dead_band then begin
+         // startup delay
+         if startup_mode then begin
+           if (tick_diff(TICK_1000, startup_timer)<3000) then begin
+             LED1_tm:=1000;
+             flag_inc := raw_vol<400;
+           end else
+             startup_mode:=False;
+         end;
+         // normal operation
+         if not startup_mode then begin
+           // power check
+           if power_curr = power_prev then begin
              LED1_tm:=500;
              goto CONTLOOP;
+           end else if power_curr < power_prev then begin
+             if power_prev-power_curr < dead_band then begin
+               LED1_tm:=500;
+               goto CONTLOOP;
+             end;
+             LED1_tm:=150;
+             flag_inc:=not flag_inc;
+           end else begin
+             if power_curr-power_prev < dead_band then begin
+               LED1_tm:=500;
+               goto CONTLOOP;
+             end;
+             LED1_tm:=300;
            end;
-           LED1_tm:=150;
-           flag_inc:=not flag_inc;
-         end else begin
-           if power_curr-power_prev < dead_band then begin
-             LED1_tm:=500;
-             goto CONTLOOP;
-           end;
-           LED1_tm:=300;
          end;
        end else begin
          LED1_tm:=150;
+         startup_mode:=true;
+         startup_timer:=TICK_1000;
          flag_inc:=True;
          power_curr:=0;
          adc_cur:=0;
