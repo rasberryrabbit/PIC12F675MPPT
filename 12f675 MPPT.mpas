@@ -40,7 +40,7 @@ const
    _UPDATE_INT = 100;
    _PWM_CHECK = 4500 div 2;
    _NOISE_MARGIN = 2;
-   _dead_band_limit = 50;
+   _dead_band_limit = (2 + 2) * VOLMUL * _NOISE_MARGIN + 1;
 
    cLM358_diff = 0;
    adc_max_loop = 4;
@@ -234,13 +234,13 @@ begin
        power_curr:= dword(adc_vol * adc_cur);
        
        dead_band := dword( raw_vol + adc_cur ) * VOLMUL * _NOISE_MARGIN;
+       
+       // 0.68% limit for dead band, (0.5~1%)
+       if dead_band > (power_curr div 128 - power_curr div 1024) then
+         dead_band := power_curr div 128 - power_curr div 1024;
+
        if dead_band < _dead_band_limit then
          dead_band := _dead_band_limit;
-       // 0.78% limit for dead band, (0.5~1%)
-       if power_curr > 10000 then begin
-         if dead_band > (power_curr div 128) then
-           dead_band := power_curr div 128;
-       end;
 
        if adc_cur>(LM358_diff + 2) then begin
          // startup delay
